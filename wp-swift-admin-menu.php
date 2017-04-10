@@ -23,6 +23,9 @@ class WP_Swift_Admin_Menu {
     	add_action( 'admin_menu', array($this, 'wp_swift_admin_menu_add_admin_menu') );
     	// register_deactivation_hook( __FILE__, 'wp_swift_admin_menu_plugin_deactivate' );
 		add_action( 'admin_init', array($this, 'wp_swift_admin_menu_settings_init') );
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'wp_swift_admin_menu_css_file') );
+		add_action( 'wp_enqueue_scripts', array($this, 'enqueue_javascript') );
     }
 
     /*
@@ -57,6 +60,29 @@ class WP_Swift_Admin_Menu {
 		}
 	}
 
+    /*
+     * Add the css file
+     */
+    function wp_swift_admin_menu_css_file() {
+        $options = get_option( 'wp_swift_admin_menu_settings' );
+
+        // if (isset($options['wp_swift_admin_menu_checkbox_css'])==false) {
+            wp_enqueue_style('wp-swift-admin-menu-style', plugins_url( 'assets/css/wp-swift-admin-menu.css', __FILE__ ) );
+        // }
+
+    }
+
+    /*
+     * Add the JavaScript file
+     */
+    public function enqueue_javascript () {
+        $options = get_option( 'wp_swift_admin_menu_settings' );
+        
+        // if (isset($options['wp_swift_admin_menu_checkbox_javascript'])==false) {
+           wp_enqueue_script( $handle='wp-swift-admin-menu', $src=plugins_url( '/assets/js/wp-swift-admin-menu.js', __FILE__ ), $deps=null, $ver=null, $in_footer=true );
+        // }
+    }
+
 	public function wp_swift_admin_menu_add_admin_menu() {
 	
 		# Create top-level menu item
@@ -65,8 +91,8 @@ class WP_Swift_Admin_Menu {
 		   	$this->menu_title,
 		   	$this->capability,
 		   	$this->menu_slug, 
-		   	array($this, 'wp_swift_admin_menu_options_page'), 
-		   	plugins_url( 'icon.png', __FILE__ )
+		   	array($this, 'wp_swift_admin_menu_options_page')//, 
+		   	// plugins_url( 'icon.png', __FILE__ )
 		);
 
 				  // add_menu_page('My Page Title', 'My Menu Title', 'manage_options', 'my-menu', 'my_menu_output' );
