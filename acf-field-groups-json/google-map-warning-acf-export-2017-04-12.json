@@ -1,0 +1,42 @@
+[
+    {
+        "key": "group_58ed23a5ab9e1",
+        "title": "Google Map Warning",
+        "fields": [
+            {
+                "key": "field_58ed27d01ffdf",
+                "label": "API Warning",
+                "name": "",
+                "type": "message",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "message": "<h3>Warning<\/h3>\r\n<p>Google maps require a an API key to be set.<\/p>\r\n<p>Please set now <b>BrightLight > Settings<\/b> or contact side admin.<\/p>",
+                "new_lines": "",
+                "esc_html": 0
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "options_page",
+                    "operator": "==",
+                    "value": ""
+                }
+            ]
+        ],
+        "menu_order": 0,
+        "position": "normal",
+        "style": "seamless",
+        "label_placement": "top",
+        "instruction_placement": "label",
+        "hide_on_screen": "",
+        "active": 1,
+        "description": ""
+    }
+]

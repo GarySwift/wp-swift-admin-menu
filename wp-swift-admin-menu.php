@@ -20,12 +20,34 @@ class WP_Swift_Admin_Menu {
      * Initializes the plugin.
      */
     public function __construct() {
+
+    		# Register the Google API key to use with Advanced Custum Fields
+		add_action('acf/init', array($this, 'wp_swift_acf_init'));
+			
+    			add_action( 'wp_enqueue_scripts', array($this, 'wp_swift_admin_menu_css_file') );
+		add_action( 'wp_enqueue_scripts', array($this, 'enqueue_javascript') );
+
+		add_action('admin_footer', array($this, 'enqueue_admin_javascript'));
+
+
+		add_action( 'admin_enqueue_scripts', array($this, 'wp_swift_admin_menu_css_file_admin_style' ));//wp-swift-admin-menu-css-file-admin-style
+
     	add_action( 'admin_menu', array($this, 'wp_swift_admin_menu_add_admin_menu') );
     	// register_deactivation_hook( __FILE__, 'wp_swift_admin_menu_plugin_deactivate' );
 		add_action( 'admin_init', array($this, 'wp_swift_admin_menu_settings_init') );
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'wp_swift_admin_menu_css_file') );
-		add_action( 'wp_enqueue_scripts', array($this, 'enqueue_javascript') );
+
+
+    	add_action( 'admin_notices', array($this, 'admin_notice_install_acf') );
+
+    		# Register ACF field groups that will appear on the options pages
+		// add_action( 'admin_menu', array($this, 'acf_add_local_field_group_google_api_key') );
+		add_action( 'admin_menu', array($this, 'acf_add_local_field_group_google_map') );
+
+		# Shortcodes for rendering the google maps.
+        add_shortcode( 'wp-swift-google-map', array( $this, 'render_google_map' ) );
+        add_shortcode( 'google-map', array( $this, 'render_google_map' ) );	
+
     }
 
     /*
@@ -60,11 +82,40 @@ class WP_Swift_Admin_Menu {
 		}
 	}
 
+	/*
+	 * It is necessary to register a Google API key in order to allow the Google API to load correctly. 
+	 *
+	 * Ref: https://www.advancedcustomfields.com/resources/google-map/
+	 *
+	 */
+	public function wp_swift_acf_init() {
+		$google_api_key = '';
+		$options = get_option( 'wp_swift_admin_menu_settings' );
+		if (isset($options['show_sidebar_options_google_map_api_key'])) {
+			$google_api_key = $options['show_sidebar_options_google_map_api_key'];
+		}
+		if( $google_api_key ) {
+			acf_update_setting('google_api_key', $google_api_key);
+		}		
+	}
+
+// Displays a notice if the Advanced Custom Fields plugin is not active.
+public function admin_notice_install_acf() {
+    if ( isset($_GET["page"]) && $_GET["page"] == "wp-swift-admin-menu"  ) : ?>
+	    <?php if (!function_exists( 'acf' )): ?>
+	    <div class="error notice">
+	        <p><?php _e( 'Please install <b>Advanced Custom Fields Pro</b>. It is required for this plugin to work properly! | <a href="http://www.advancedcustomfields.com/pro/" target="_blank">ACF Pro</a>', 'wp-swift-admin-menu' ); ?></p>
+	        <small><i><?php _e( 'Option pages will not show until this is installed', 'wp-swift-admin-menu' ); ?></i></small>
+	    </div>
+	    <?php endif;    	
+   	endif;
+
+}
     /*
      * Add the css file
      */
-    function wp_swift_admin_menu_css_file() {
-        $options = get_option( 'wp_swift_admin_menu_settings' );
+    public function wp_swift_admin_menu_css_file() {
+        // $options = get_option( 'wp_swift_admin_menu_settings' );
 
         // if (isset($options['wp_swift_admin_menu_checkbox_css'])==false) {
             wp_enqueue_style('wp-swift-admin-menu-style', plugins_url( 'assets/css/wp-swift-admin-menu.css', __FILE__ ) );
@@ -72,17 +123,27 @@ class WP_Swift_Admin_Menu {
 
     }
 
+	public function wp_swift_admin_menu_css_file_admin_style() {
+	        // wp_register_style( 'custom_wp_admin_css', get_template_directory_uri() . '/admin-style.css', false, '1.0.0' );
+	        // wp_enqueue_style( 'custom_wp_admin_css' );
+		wp_enqueue_style('wp-swift-admin-menu-style', plugins_url( 'assets/css/wp-swift-admin-menu-css-file-admin-style.css', __FILE__ ) );
+	}
     /*
      * Add the JavaScript file
      */
     public function enqueue_javascript () {
-        $options = get_option( 'wp_swift_admin_menu_settings' );
+        // $options = get_option( 'wp_swift_admin_menu_settings' );
         
         // if (isset($options['wp_swift_admin_menu_checkbox_javascript'])==false) {
            wp_enqueue_script( $handle='wp-swift-admin-menu', $src=plugins_url( '/assets/js/wp-swift-admin-menu.js', __FILE__ ), $deps=null, $ver=null, $in_footer=true );
         // }
     }
-
+    /*
+     * Add the JavaScript file
+     */
+    public function enqueue_admin_javascript () {
+        wp_enqueue_script( $handle='wp-swift-admin-menu', $src=plugins_url( '/assets/js/wp-swift-admin-menu-backend.js', __FILE__ ), $deps=null, $ver=null, $in_footer=true );
+    }
 	public function wp_swift_admin_menu_add_admin_menu() {
 	
 		# Create top-level menu item
@@ -91,8 +152,8 @@ class WP_Swift_Admin_Menu {
 		   	$this->menu_title,
 		   	$this->capability,
 		   	$this->menu_slug, 
-		   	array($this, 'wp_swift_admin_menu_options_page')//, 
-		   	// plugins_url( 'icon.png', __FILE__ )
+		   	array($this, 'wp_swift_admin_menu_options_page'), 
+		   	plugins_url( 'icon.png', __FILE__ )
 		);
 
 				  // add_menu_page('My Page Title', 'My Menu Title', 'manage_options', 'my-menu', 'my_menu_output' );
@@ -127,36 +188,52 @@ class WP_Swift_Admin_Menu {
   //       if($show_sidebar_option_contact_details) {
        
         // }
-        if ($this->show_sidebar_option('show_sidebar_option_contact_details')) {
-            acf_add_options_sub_page(array(
-                'title' => 'Contact Details',
-                'slug' => 'contact_details',
-                'parent' => $this->menu_slug,
-            ));
-        }
-	    if($this->show_sidebar_option('show_sidebar_option_social_media')) {
-            acf_add_options_sub_page(array(
-                'title' => 'Social Media',
-                'slug' => 'social_media',
-                'parent' => $this->menu_slug,
-            ));
-        }
-	    if($this->show_sidebar_option('show_sidebar_options_google_map')) {
-            acf_add_options_sub_page(array(
-                'title' => 'Google Map Set',
-                'slug' => 'google-map-set',
-                'parent' => $this->menu_slug,
-            )); 
-        }        
-	    if($this->show_sidebar_option('show_sidebar_options_opening_hours')) {
-            acf_add_options_sub_page(array(
-                'title' => 'Opening Hours',
-                'slug' => 'opening-hours',
-                'parent' => $this->menu_slug,
-            )); 
-        }
+		if(function_exists('acf_add_options_page')) { 
+	        if ($this->show_sidebar_option('show_sidebar_option_contact_details')) {
+	            acf_add_options_sub_page(array(
+	                'title' => 'Contact Details',
+	                'slug' => 'contact_details',
+	                'parent' => $this->menu_slug,
+	            ));
+	        }
+		    if($this->show_sidebar_option('show_sidebar_option_social_media')) {
+	            acf_add_options_sub_page(array(
+	                'title' => 'Social Media',
+	                'slug' => 'social_media',
+	                'parent' => $this->menu_slug,
+	            ));
+	        }
+		    if($this->show_sidebar_option('show_sidebar_options_google_map')) {
+	            acf_add_options_sub_page(array(
+	                'title' => 'Google Map',
+	                'slug' => 'google-map',
+	                'parent' => $this->menu_slug,
+	            )); 
+	        }        
+		    if($this->show_sidebar_option('show_sidebar_options_opening_hours')) {
+	            acf_add_options_sub_page(array(
+	                'title' => 'Opening Hours',
+	                'slug' => 'opening-hours',
+	                'parent' => $this->menu_slug,
+	            )); 
+	        }
+	    }
+
+    		$test_args = array(
+			'page_title' => 'BrightLight Test Page - For Developent purposes Only!',
+			'menu_title' => 'BrightLight Test',
+			'menu_slug' => 'wp-swift-admin-menu-test-page',
+			'capability' => $this->capability,
+			'icon_url' => 'dashicons-hammer',
+		);
+		if( function_exists('acf_add_options_page') ) {
+			acf_add_options_page($test_args);
+		}
 	}
 
+	public function wp_swift_admin_menu_test_page() {
+			
+	}
 	private function show_sidebar_option($option) {
 		$options = get_option( 'wp_swift_admin_menu_settings' );
 		if (isset($options[$option]) && $options[$option]) {
@@ -167,70 +244,72 @@ class WP_Swift_Admin_Menu {
 
 function wp_swift_admin_menu_settings_init(  ) { 
 
-	register_setting( 'pluginPage', 'wp_swift_admin_menu_settings' );
+		register_setting( 'pluginPage', 'wp_swift_admin_menu_settings' );
 
-	add_settings_section(
-		'wp_swift_admin_menu_pluginPage_section', 
-		__( 'Configuration Page', 'wp-swift-admin-menu' ), 
-		array($this, 'wp_swift_admin_menu_settings_section_callback'), 
-		'pluginPage'
-	);
+		add_settings_section(
+			'wp_swift_admin_menu_pluginPage_section', 
+			__( 'Configuration Page', 'wp-swift-admin-menu' ), 
+			array($this, 'wp_swift_admin_menu_settings_section_callback'), 
+			'pluginPage'
+		);
 
-	add_settings_field( 
-		'show_sidebar_option_contact_details', 
-		__( 'Show Contact Page', 'wp-swift-admin-menu' ), 
-		array($this, 'show_sidebar_option_contact_details_render'), 
-		'pluginPage', 
-		'wp_swift_admin_menu_pluginPage_section' 
-	);
+		add_settings_field( 
+			'show_sidebar_option_contact_details', 
+			__( 'Show Contact Page', 'wp-swift-admin-menu' ), 
+			array($this, 'show_sidebar_option_contact_details_render'), 
+			'pluginPage', 
+			'wp_swift_admin_menu_pluginPage_section',
+			array( 'label_for' => 'myprefix_setting-id' ) 
+		);
 
-	add_settings_field( 
-		'show_sidebar_option_social_media', 
-		__( 'Show Social Media', 'wp-swift-admin-menu' ), 
-		array($this, 'show_sidebar_option_social_media_render'), 
-		'pluginPage', 
-		'wp_swift_admin_menu_pluginPage_section' 
-	);
+		add_settings_field( 
+			'show_sidebar_option_social_media', 
+			__( 'Show Social Media', 'wp-swift-admin-menu' ), 
+			array($this, 'show_sidebar_option_social_media_render'), 
+			'pluginPage', 
+			'wp_swift_admin_menu_pluginPage_section' 
+		);
 
-	add_settings_field( 
-		'show_sidebar_options_opening_hours', 
-		__( 'Settings Opening Hours', 'wp-swift-admin-menu' ), 
-		array($this, 'show_sidebar_options_opening_hours_render'), 
-		'pluginPage', 
-		'wp_swift_admin_menu_pluginPage_section' 
-	);
+		add_settings_field( 
+			'show_sidebar_options_opening_hours', 
+			__( 'Settings Opening Hours', 'wp-swift-admin-menu' ), 
+			array($this, 'show_sidebar_options_opening_hours_render'), 
+			'pluginPage', 
+			'wp_swift_admin_menu_pluginPage_section' 
+		);
 
-	add_settings_field( 
-		'show_sidebar_options_google_map', 
-		__( 'Show Google Map', 'wp-swift-admin-menu' ), 
-		array($this, 'show_sidebar_options_google_map_render'), 
-		'pluginPage', 
-		'wp_swift_admin_menu_pluginPage_section' 
-	);
+		add_settings_field( 
+			'show_sidebar_options_google_map', 
+			__( 'Show Google Map', 'wp-swift-admin-menu' ), 
+			array($this, 'show_sidebar_options_google_map_render'), 
+			'pluginPage', 
+			'wp_swift_admin_menu_pluginPage_section' 
+		);
 
-	add_settings_field( 
-		'show_sidebar_options_google_map_api_key', 
-		__( 'Google Map API key', 'wp-swift-admin-menu' ), 
-		array($this, 'show_sidebar_options_google_map_api_key_render'), 
-		'pluginPage', 
-		'wp_swift_admin_menu_pluginPage_section' 
-	);
+		add_settings_field( 
+			'show_sidebar_options_google_map_api_key', 
+			__( 'Google Map API key', 'wp-swift-admin-menu' ), 
+			array($this, 'show_sidebar_options_google_map_api_key_render'), 
+			'pluginPage', 
+			'wp_swift_admin_menu_pluginPage_section',
+			array( 'label_for' => 'google-map-api-key' )
+		);
 
-	add_settings_field( 
-		'show_sidebar_options_google_map_style', 
-		__( 'Google Map Style', 'wp-swift-admin-menu' ), 
-		array($this, 'show_sidebar_options_google_map_style_render'), 
-		'pluginPage', 
-		'wp_swift_admin_menu_pluginPage_section' 
-	);
-	// add_settings_field( 
-	// 	'wp_swift_admin_menu_checkbox_field_3', 
-	// 	__( 'Settings field description', 'wp-swift-admin-menu' ), 
-	// 	array($this, 'wp_swift_admin_menu_checkbox_field_3_render'), 
-	// 	'pluginPage', 
-	// 	'wp_swift_admin_menu_pluginPage_section' 
-	// );
-
+		add_settings_field( 
+			'show_sidebar_options_google_map_style', 
+			__( 'Google Map Style', 'wp-swift-admin-menu' ), 
+			array($this, 'show_sidebar_options_google_map_style_render'), 
+			'pluginPage', 
+			'wp_swift_admin_menu_pluginPage_section',
+			array( 'label_for' => 'google-map-style' ) 
+		);
+		// add_settings_field( 
+		// 	'wp_swift_admin_menu_checkbox_field_3', 
+		// 	__( 'Settings field description', 'wp-swift-admin-menu' ), 
+		// 	array($this, 'wp_swift_admin_menu_checkbox_field_3_render'), 
+		// 	'pluginPage', 
+		// 	'wp_swift_admin_menu_pluginPage_section' 
+		// );
 
 }
 
@@ -285,11 +364,11 @@ function show_sidebar_options_google_map_render(  ) {
 
 	$options = get_option( 'wp_swift_admin_menu_settings' );
 	?>
-	<input type='checkbox' name='wp_swift_admin_menu_settings[show_sidebar_options_google_map]' <?php 
+	<input type="checkbox" value="1" id="show-sidebar-options-google-map" name="wp_swift_admin_menu_settings[show_sidebar_options_google_map]" <?php 
 		if (isset($options['show_sidebar_options_google_map'])) {
 			checked( $options['show_sidebar_options_google_map'], 1 ); 
 		}
-	?> value='1'>
+	?>>
 	<?php
 }
 
@@ -301,7 +380,7 @@ function show_sidebar_options_google_map_api_key_render(  ) {
  		$readonly = ' readonly';
 	}
 	?>
-	<input type="text" size="50" name="wp_swift_admin_menu_settings[show_sidebar_options_google_map_api_key]" value="<?php if (isset($options['show_sidebar_options_google_map_api_key'])) echo $options['show_sidebar_options_google_map_api_key']; ?>"<?php echo $readonly; ?>>
+	<input type="text" size="50" id="google-map-api-key" class="google-map-toggle-readonly" name="wp_swift_admin_menu_settings[show_sidebar_options_google_map_api_key]" value="<?php if (isset($options['show_sidebar_options_google_map_api_key'])) echo $options['show_sidebar_options_google_map_api_key']; ?>"<?php echo $readonly; ?>>
 	<?php
 }
 
@@ -313,13 +392,13 @@ function show_sidebar_options_google_map_style_render(  ) {
  		$readonly = ' readonly';
 	}
 	?>
-	<textarea cols='49' rows='5' name='wp_swift_admin_menu_settings[show_sidebar_options_google_map_style]'<?php echo $readonly; ?>> 
+	<textarea cols='49' rows='5' id="google-map-style" class="google-map-toggle-readonly" name='wp_swift_admin_menu_settings[show_sidebar_options_google_map_style]'<?php echo $readonly; ?>> 
 		<?php if (isset($options['show_sidebar_options_google_map_style'])) {
 			echo $options['show_sidebar_options_google_map_style'];
 		} ?>
  	</textarea>
  	<?php if (!$readonly): ?>
- 		<p><small><i>Maps styles are available at </i><a href="https://snazzymaps.com/" target="_blank">Snazzy Maps</a>.</small></p>
+ 		<p class="google-map-toggle-show"><small><i>Maps styles are available at </i><a href="https://snazzymaps.com/" target="_blank">Snazzy Maps</a>.</small></p>
  	<?php endif;
 }
 function wp_swift_admin_menu_checkbox_field_3_render(  ) { 
@@ -340,34 +419,319 @@ function wp_swift_admin_menu_checkbox_field_3_render(  ) {
 
 		echo __( 'Select the options pages you wish to show below', 'wp-swift-admin-menu' );
 		// $options = get_option( 'wp_swift_admin_menu_settings' ); echo "<pre>"; var_dump($options); echo "</pre>";
-
+		// echo "<pre>"; var_dump($_GET); echo "</pre>";
 	}
 
 	public function wp_swift_admin_menu_options_page(  ) { 
-
 		?>
 		<div id="wp-swift-admin-menu-options-page" class="wrap">
-		<form action='options.php' method='post'>
-
-			<h1><?php echo $this->page_title; ?></h1>
-<table class="form-table">
-<tbody>
-			<?php
-			settings_fields( 'pluginPage' );
-			do_settings_sections( 'pluginPage' );
-			submit_button();
-			?>
-</tbody>
-</table>
-
-		</form>
-
-
-		
+			<form action='options.php' method='post'>
+				<h1><?php echo $this->page_title; ?></h1>
+				<table class="form-table">
+					<tbody>
+						<?php
+						
+						if (function_exists( 'acf' )) {
+							settings_fields( 'pluginPage' );
+							do_settings_sections( 'pluginPage' );
+							submit_button();
+						}
+						?>
+					</tbody>
+				</table>
+			</form>
 		</div>
 		<?php
-
 	}
+
+    /**
+     * A shortcode for rendering the google map.
+     *
+     * @param  array   $attributes  Shortcode attributes.
+     * @param  string  $content     The text content for shortcode. Not used.
+     *
+     * @return string  The shortcode output
+     */
+    public function render_google_map( $attributes=null, $content = null ) {
+        ob_start();
+
+        if (isset($options['show_sidebar_options_google_map_api_key']) && $options['show_sidebar_options_google_map_api_key'] != ''):
+     
+     		$location = get_field('map', 'option');
+			if( !empty($location) ):
+			?>
+				<?php if (isset($attributes['address'])): ?>
+					<p><?php echo $location['address']; ?></p>
+				<?php endif ?>
+				
+				<div class="acf-map">
+					<div class="marker" data-lat="<?php echo $location['lat']; ?>" data-lng="<?php echo $location['lng']; ?>"></div>
+				</div>
+			<?php endif; ?>
+		<?php else: ?>
+			<div class="callout">
+				<h5>Sorry, there was a problem with the Google API key.</h5>
+			</div>
+			<?php
+		endif;
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }	
+
+	/*
+	 * The ACF field group for 'Google Map'
+	 */	
+	public function acf_add_local_field_group_google_map() {
+		$options = get_option( 'wp_swift_admin_menu_settings' );
+		if (isset($options['show_sidebar_options_google_map_api_key']) && $options['show_sidebar_options_google_map_api_key'] != '') {
+			if( function_exists('acf_add_local_field_group') ) {
+
+				acf_add_local_field_group(array (
+					'key' => 'group_58b53ef2b3176',
+					'title' => 'Google Map',
+					'fields' => array (
+						array (
+							'key' => 'field_58b5464b3d00a',
+							'label' => 'Map',
+							'name' => 'map',
+							'type' => 'google_map',
+							'instructions' => '',
+							'required' => 0,
+							'conditional_logic' => 0,
+							'wrapper' => array (
+								'width' => '',
+								'class' => '',
+								'id' => '',
+							),
+							'center_lat' => '52.259320',
+							'center_lng' => '-7.110070',
+							'zoom' => 16,
+							'height' => '',
+						),
+					),
+					'location' => array (
+						array (
+							array (
+								'param' => 'options_page',
+								'operator' => '==',
+								'value' => 'google-map',
+							),
+						),
+					),
+					'menu_order' => 0,
+					'position' => 'normal',
+					'style' => 'seamless',
+					'label_placement' => 'top',
+					'instruction_placement' => 'label',
+					'hide_on_screen' => '',
+					'active' => 1,
+					'description' => '',
+				));
+
+			}
+		}
+		else {
+			if( function_exists('acf_add_local_field_group') ) {
+
+				acf_add_local_field_group(array (
+					'key' => 'group_58ed23a5ab9e1',
+					'title' => 'Google Map Warning',
+					'fields' => array (
+						array (
+							'key' => 'field_58ed27d01ffdf',
+							'label' => 'API Key Warning',
+							'name' => '',
+							'type' => 'message',
+							'instructions' => '',
+							'required' => 0,
+							'conditional_logic' => 0,
+							'wrapper' => array (
+								'width' => '',
+								'class' => '',
+								'id' => '',
+							),
+							'message' => '<p>Google maps require an API key to be set.</p>
+				<p>Please set now <b>BrightLight > Settings</b> or contact side admin if you do not have permission.</p>',
+							'new_lines' => '',
+							'esc_html' => 0,
+						),
+					),
+					'location' => array (
+						array (
+							array (
+								'param' => 'options_page',
+								'operator' => '==',
+								'value' => 'google-map',
+							),
+						),
+					),
+					'menu_order' => 0,
+					'position' => 'normal',
+					'style' => 'seamless',
+					'label_placement' => 'top',
+					'instruction_placement' => 'label',
+					'hide_on_screen' => '',
+					'active' => 1,
+					'description' => '',
+				));
+			}
+		}
+	}
+
+	/*
+	 * The ACF field group for 'Contact Details'
+	 */	
+	public function acf_add_local_field_group_contact_details() {
+		if( function_exists('acf_add_local_field_group') ):
+
+			acf_add_local_field_group(array (
+				'key' => 'group_58ee803f4eb5d',
+				'title' => 'Contact Details',
+				'fields' => array (
+					array (
+						'key' => 'field_58ee80cbf9d78',
+						'label' => 'Notes',
+						'name' => '',
+						'type' => 'message',
+						'instructions' => '',
+						'required' => 0,
+						'conditional_logic' => 0,
+						'wrapper' => array (
+							'width' => '',
+							'class' => '',
+							'id' => '',
+						),
+						'message' => 'You should input the phone number so that it is easily readable by humans. This is then parsed in the background to become a machine dialable number. (ie. users can click to call on their phone.) The number input here is the publically visible number that users will see.
+
+			<b>Example:</b>
+
+			<pre>+353 (0)51 124 1234</pre>
+
+			This will then be parsed into:
+
+			<pre>+35351124234</pre>
+
+			As you can see, spaces are removed as is the optional zero and brackets before the area code.',
+						'new_lines' => 'wpautop',
+						'esc_html' => 0,
+					),
+					array (
+						'key' => 'field_58ee806d145a3',
+						'label' => 'Mobile',
+						'name' => 'mobile',
+						'type' => 'text',
+						'instructions' => '',
+						'required' => 0,
+						'conditional_logic' => 0,
+						'wrapper' => array (
+							'width' => '',
+							'class' => '',
+							'id' => '',
+						),
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'maxlength' => '',
+					),
+					array (
+						'key' => 'field_58ee804f145a2',
+						'label' => 'Office Phone',
+						'name' => 'office_phone',
+						'type' => 'text',
+						'instructions' => '',
+						'required' => 0,
+						'conditional_logic' => 0,
+						'wrapper' => array (
+							'width' => '',
+							'class' => '',
+							'id' => '',
+						),
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'maxlength' => '',
+					),
+					array (
+						'key' => 'field_58ee8078145a4',
+						'label' => 'Email',
+						'name' => 'email',
+						'type' => 'email',
+						'instructions' => '',
+						'required' => 0,
+						'conditional_logic' => 0,
+						'wrapper' => array (
+							'width' => '',
+							'class' => '',
+							'id' => '',
+						),
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+					),
+					array (
+						'key' => 'field_58ee83cdc7f47',
+						'label' => 'First Name',
+						'name' => 'first_name',
+						'type' => 'text',
+						'instructions' => '',
+						'required' => 0,
+						'conditional_logic' => 0,
+						'wrapper' => array (
+							'width' => '',
+							'class' => '',
+							'id' => '',
+						),
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'maxlength' => '',
+					),
+					array (
+						'key' => 'field_58ee83e2c7f48',
+						'label' => 'Last Name',
+						'name' => 'last_name',
+						'type' => 'text',
+						'instructions' => '',
+						'required' => 0,
+						'conditional_logic' => 0,
+						'wrapper' => array (
+							'width' => '',
+							'class' => '',
+							'id' => '',
+						),
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'maxlength' => '',
+					),
+				),
+				'location' => array (
+					array (
+						array (
+							'param' => 'options_page',
+							'operator' => '==',
+							'value' => 'contact_details',
+						),
+					),
+				),
+				'menu_order' => 0,
+				'position' => 'normal',
+				'style' => 'default',
+				'label_placement' => 'top',
+				'instruction_placement' => 'label',
+				'hide_on_screen' => '',
+				'active' => 1,
+				'description' => '',
+			));
+
+		endif;		
+	}	
 }
 $wp_swift_admin_menu = new WP_Swift_Admin_Menu();
 register_activation_hook( __FILE__, array( 'WP_Swift_Admin_Menu', 'install' ) ); 

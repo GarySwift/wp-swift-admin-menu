@@ -1,0 +1,4 @@
+/* Plain old CSS - not overridden by sass/compass */
+label.disabled {
+   color: #AEAEAE;
+}
