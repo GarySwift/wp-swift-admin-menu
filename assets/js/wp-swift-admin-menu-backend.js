@@ -8,21 +8,23 @@ jQuery(document).ready(function($){
 	$showSidebarOptionsGoogleMap.change(function() {
         if($(this).is(":checked")) {
 
-            console.log('this is checked');
+            // console.log('this is checked');
 
             $googleMapToggleReadonlyClass.prop("readonly", false);
             $googleMapToggleShowClass.show();
 
-            $('label[for="google-map-api-key"]').removeClass('disabled');
-            $('label[for="google-map-style"]').removeClass('disabled');
+            // $('label[for="google-map-api-key"]').removeClass('disabled');
+            // $('label[for="google-map-style"]').removeClass('disabled');
+            $('#table-wrapper').removeClass('map-disabled');
         }
         else {
         	
         	$googleMapToggleReadonlyClass.prop("readonly", true);
         	$googleMapToggleShowClass.hide();
-        	$('label[for="google-map-api-key"]').addClass('disabled');
-        	$('label[for="google-map-style"]').addClass('disabled');
-        	console.log('unchecked');
+        	// $('label[for="google-map-api-key"]').addClass('disabled');
+        	// $('label[for="google-map-style"]').addClass('disabled');
+            $('#table-wrapper').addClass('map-disabled');
+        	// console.log('unchecked');
         }
    
     });

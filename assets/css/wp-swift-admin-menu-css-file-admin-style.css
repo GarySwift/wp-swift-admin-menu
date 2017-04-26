@@ -2,3 +2,36 @@
 label.disabled {
    color: #AEAEAE;
 }
+label[for="google-map-api-key"]::after {
+	content: "*";
+	color: #C5000C;
+}
+table.map-disabled th label[for="google-map-api-key"], table.map-disabled label[for="google-map-style"], label.disabled {
+   color: #AEAEAE;
+}
+table.map-disabled label {
+   color: #AEAEAE;
+}
+
+#table-wrapper.map-disabled label[for="google-map-api-key"], #table-wrapper.map-disabled label[for="google-map-style"], label.disabled{
+   color: #AEAEAE;
+}
+
+pre.prettyprint {
+	background-color: #FCFCFC;
+	border-color: #C7C7C7;
+	padding: 10px;
+}
+pre.prettyprint {
+	white-space: pre-wrap;       /* css-3 */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */	
+}
+.desc {
+/*	background-color: red;
+	padding-left: 30px;*/
+	max-width: 600px;
+	/*float: left;*/
+}
