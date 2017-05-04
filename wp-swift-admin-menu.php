@@ -260,17 +260,6 @@ public function admin_notice_install_acf() {
 		include "acf-field-groups/_acf-field-group-social-media.php";
 	}	
 
-
-
-
-
-
-
-
-
-
-
-
     /*
      * 
      * Create the menu pages that show in the side bar.
@@ -336,7 +325,15 @@ public function admin_notice_install_acf() {
 					'icon_url' => 'dashicons-hammer',
 				);
 				acf_add_options_page($test_args);
-	        }    
+	        }
+	        		    	$test_args = array(
+					'page_title' => 'Test Page - For Developent purposes Only!',
+					'menu_title' => 'Test Page',
+					'menu_slug' => 'wp-swift-admin-menu-test-page',
+					'capability' => $this->capability,
+					'icon_url' => 'dashicons-hammer',
+				);
+				acf_add_options_page($test_args);    
 	    }
 	}
 
@@ -427,6 +424,26 @@ public function admin_notice_install_acf() {
 			array( 'label_for' => 'google-map-style' ) 
 		);
 
+
+/*
+ * ********************
+ */
+// register_setting( 'contact-form', 'wp_swift_contact_form_settings' );
+
+// add_settings_section(
+// 	'wp_swift_admin_menu_contact_form_page_section', 
+// 	__( 'Contact Settings', 'wp-swift-admin-menu' ), 
+// 	array($this, 'wp_swift_admin_menu_contact_form_section_callback'), 
+// 	'contact-form'
+// );
+
+// add_settings_field( 
+// 	'show_sidebar_options_contact_form_api_key', 
+// 	__( 'Contact API key', 'wp-swift-admin-menu' ), 
+// 	array($this, 'show_sidebar_options_contact_form_api_key_render'), 
+// 	'contact-form', 
+// 	'wp_swift_admin_menu_contact_form_page_section'
+// );
 		/******************************************************************************
 		 *
 		 * Register the settings for the 'Utilities' tab help
@@ -595,7 +612,7 @@ public function admin_notice_install_acf() {
 		?><input type="text" size="50" id="google-map-api-key" class="google-map-toggle-readonly" name="wp_swift_google_map_settings[show_sidebar_options_google_map_api_key]" value="<?php if (isset($options['show_sidebar_options_google_map_api_key'])) echo $options['show_sidebar_options_google_map_api_key']; ?>"<?php echo $readonly; ?>>
 		<p><i><small>This is required and maps will not render without it.</small></i></p><?php
 	}
-
+	
 	/*
 	 * Render textarea that allows the user to add a snazzy map json config
 	 */
@@ -686,10 +703,7 @@ public function admin_notice_install_acf() {
 	}
 
 	public function wp_swift_admin_menu_help_page_social_media_render() {
-		?>
-			<b>//TO DO</b>
-			<pre class="prettyprint">// TO DO</pre>
-		<?php
+		include "help-page-partials/_social-media.php";
 	}
 
 	# @end Render 'Settings' page -> 'Help Page'

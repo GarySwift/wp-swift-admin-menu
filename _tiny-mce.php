@@ -66,7 +66,12 @@ function foundationpress_before_tiny_mce_init_insert_formats( $init_array ) {
 		array(  
 			'title' => 'Small',  
 			'inline' => 'small',
-		),		
+		),	
+		array(  
+			'title' => 'clearfix',  
+			'block' => 'div',  
+			'classes' => 'clearfix',
+		),			
 	);  
 
 	// Insert the array, JSON ENCODED, into 'style_formats'
@@ -97,4 +102,4 @@ function enable_more_buttons($buttons) {
 	*/
   return $buttons;
 }
-add_filter("mce_buttons", "enable_more_buttons");
+// add_filter("mce_buttons", "enable_more_buttons");

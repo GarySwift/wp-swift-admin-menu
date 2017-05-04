@@ -8,12 +8,16 @@ if (isset($options['show_sidebar_options_google_map_style'])) {
 } 
 // contentString is used to make the Info windows in the google map 
 // More: https://developers.google.com/maps/documentation/javascript/examples/infowindow-simple
+$site = array(
+	'name' => get_bloginfo('name'),
+	'description' => get_bloginfo('description'),
+);
 ob_start();
 ?>
 <div id="content" class="google-content-pane">
 	<div id="siteNotice"></div>
-	<h5 id="firstHeading"><?php echo get_bloginfo('name') ?></h5>
-	<h6 id="secondHeading"><?php echo get_bloginfo('description') ?></h6>
+	<h5 id="firstHeading"><?php echo $site['name'] ?></h5>
+	<h6 id="secondHeading"><?php echo $site['description'] ?></h6>
 </div>
 <?php
 	$contentString = ob_get_contents();
@@ -24,7 +28,14 @@ ob_start();
     var map_zoom_level = <?php echo json_encode($map_zoom_level); ?>;
     map_zoom_level = parseInt(map_zoom_level);
     var map_style = <?php echo json_encode($map_style); ?>;
-    map_style = JSON.parse(map_style);
+    var site = <?php echo json_encode($site); ?>;
+	if(map_style!=='') {
+	    try {
+	        map_style = JSON.parse(map_style);
+	    } catch(e) {
+	        console.error(e);
+	    }
+	}	
     var contentString = <?php echo json_encode($contentString); ?>;
 </script>
 <?php 

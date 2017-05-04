@@ -1,5 +1,5 @@
 <?php
-$options = get_option( 'wp_swift_admin_menu_settings' );
+$options = get_option( 'wp_swift_google_map_settings' );
 if (isset($options['show_sidebar_options_google_map_api_key']) && $options['show_sidebar_options_google_map_api_key'] != '') {
 	if( function_exists('acf_add_local_field_group') ) {
 

@@ -1,4 +1,8 @@
-<?php $options = get_option( 'wp_swift_admin_menu_settings' ); ?>
+<?php 
+$options = get_option( 'wp_swift_admin_menu_settings' ); 
+$show_contact_form = class_exists('WP_Swift_Form_Builder_Contact_Form');
+$show_form_builder = class_exists('WP_Swift_Form_Builder_Plugin');
+?>
 <div id="wp-swift-admin-menu-options-page" class="wrap">
 
 	<h1><?php echo $this->page_title; ?></h1>
@@ -14,7 +18,16 @@
 
 	    <a href="?page=<?php echo $this->menu_slug ?>&tab=utilities" class="nav-tab <?php echo $active_tab == 'utilities' ? 'nav-tab-active' : ''; ?>">Utilities</a>
 
-	    <a href="?page=<?php echo $this->menu_slug ?>&tab=help-page" class="nav-tab <?php echo $active_tab == 'help-page' ? 'nav-tab-active' : ''; ?>">Help Page</a>
+		<?php if ($show_form_builder): ?>
+			<a href="?page=<?php echo $this->menu_slug ?>&tab=form-builder" class="nav-tab <?php echo $active_tab == 'form-builder' ? 'nav-tab-active' : ''; ?>">Form Builder</a>
+		<?php endif ?>		
+
+		<?php if ($show_contact_form): ?>
+			<a href="?page=<?php echo $this->menu_slug ?>&tab=contact-form" class="nav-tab <?php echo $active_tab == 'contact-form' ? 'nav-tab-active' : ''; ?>">Contact Form</a>
+		<?php endif ?>
+		
+		<a href="?page=<?php echo $this->menu_slug ?>&tab=help-page" class="nav-tab <?php echo $active_tab == 'help-page' ? 'nav-tab-active' : ''; ?>">Help Page</a>
+	    
 	</h2>
 			
 	<form action='options.php' method='post'>
@@ -37,10 +50,20 @@
 						do_settings_sections( 'utilities' );
 						submit_button();
 					}	
+					elseif ($show_form_builder && $active_tab == 'form-builder'){
+						settings_fields( 'form-builder' );
+						do_settings_sections( 'form-builder' );
+						submit_button();
+					}					
+					elseif ($show_contact_form && $active_tab == 'contact-form'){
+						settings_fields( 'contact-form' );
+						do_settings_sections( 'contact-form' );
+						submit_button();
+					}
 					elseif ($active_tab == 'help-page'){
 						settings_fields( 'help-page' );
 						do_settings_sections( 'help-page' );
-					}
+					}					
 				}
 			?>
 		</div>
