@@ -41,8 +41,9 @@ class WP_Swift_Admin_Menu {
     	add_action( 'admin_notices', array($this, 'admin_notice_install_acf') );
 
     	# Register ACF field groups that will appear on the options pages
-		add_action( 'admin_menu', array($this, 'acf_add_local_field_group_google_map') );
-		add_action( 'admin_menu', array($this, 'acf_add_local_field_group_social_media') );
+		add_action( 'init', array($this, 'acf_add_local_field_group_google_map') );
+		add_action( 'init', array($this, 'acf_add_local_field_group_social_media') );
+		add_action( 'init', array($this, 'acf_add_local_field_group_contact_details') );
 
 		# Shortcodes for rendering the google maps.
         // add_shortcode( 'wp-swift-google-map', array( $this, 'render_google_map' ) );
@@ -268,6 +269,13 @@ public function admin_notice_install_acf() {
      * The submenus use Advanced Custom Fields API to register pages
      */
 	public function wp_swift_admin_menu_add_admin_menu() {
+		$this->menu_title = "WP Swift";
+		$icon = 'assets/images/icon.png';
+		$options = get_option( 'wp_swift_admin_menu_settings' );
+		if (isset($options['branding_select']) && $options['branding_select']==2) {
+			$this->menu_title = "BrightLight";
+			$icon = 'assets/images/icon-2.png';
+		}
 	
 		# Create top-level menu item
 		add_menu_page( 
@@ -276,7 +284,7 @@ public function admin_notice_install_acf() {
 		   	$this->capability,
 		   	$this->menu_slug, 
 		   	array($this, 'wp_swift_admin_menu_options_page_render'), 
-		   	plugins_url( 'assets/images/icon.png', __FILE__ )
+		   	plugins_url( $icon, __FILE__ )
 		);
 
     	add_submenu_page($this->menu_slug, $this->page_title, $this->page_title, $this->capability, $this->menu_slug );
@@ -316,7 +324,8 @@ public function admin_notice_install_acf() {
 	        /*
 	         * This is a top level page outside the main menu
 	         */
-	    	if($this->show_sidebar_option('show_sidebar_options_test_page')) {
+	        $show_sidebar_options_test_page=true;
+	    	if($show_sidebar_options_test_page || $this->show_sidebar_option('show_sidebar_options_test_page')) {
 		    	$test_args = array(
 					'page_title' => 'Test Page - For Developent purposes Only!',
 					'menu_title' => 'Test Page',
@@ -326,14 +335,6 @@ public function admin_notice_install_acf() {
 				);
 				acf_add_options_page($test_args);
 	        }
-	        		    	$test_args = array(
-					'page_title' => 'Test Page - For Developent purposes Only!',
-					'menu_title' => 'Test Page',
-					'menu_slug' => 'wp-swift-admin-menu-test-page',
-					'capability' => $this->capability,
-					'icon_url' => 'dashicons-hammer',
-				);
-				acf_add_options_page($test_args);    
 	    }
 	}
 
@@ -387,6 +388,14 @@ public function admin_notice_install_acf() {
 			'show_sidebar_options_google_map', 
 			__( 'Show Google Map', 'wp-swift-admin-menu' ), 
 			array($this, 'show_sidebar_options_google_map_render'), 
+			'menu_options', 
+			'wp_swift_admin_menu_menu_options_section' 
+		);	
+
+		add_settings_field( 
+			'branding_select', 
+			__( 'Branding', 'wp-swift-admin-menu' ), 
+			array($this, 'branding_select_render'), 
 			'menu_options', 
 			'wp_swift_admin_menu_menu_options_section' 
 		);		
@@ -584,6 +593,22 @@ public function admin_notice_install_acf() {
 		?>><?php
 	}
 
+/*
+	 * Render select box that determines branding used
+	 */
+	public function branding_select_render(  ) { 
+
+		$options = get_option( 'wp_swift_admin_menu_settings' );
+		// if (isset($options['branding_select'])) {
+		// 	$options['branding_select']=1;
+		// }
+		?><select id="branding_select" name="wp_swift_admin_menu_settings[branding_select]">
+			<option value='1' <?php selected( $options['branding_select'], 1 ); ?>>WP Swift</option>
+			<option value='2' <?php selected( $options['branding_select'], 2 ); ?>>BrightLight</option>
+		</select><?php
+
+	}
+
 	# @end Render 'Settings' page -> 'Menu Options' tab
 
 	/******************************************************************************
@@ -715,3 +740,8 @@ register_deactivation_hook( __FILE__, array( 'WP_Swift_Admin_Menu', 'wp_swift_ad
  * Include the function that will render the google map
  */    
 include "wp-swift-google-map.php";
+
+/*
+ * Include the functions that render shortcodes
+ */  
+include "_shortcodes.php";
