@@ -745,3 +745,5 @@ include "wp-swift-google-map.php";
  * Include the functions that render shortcodes
  */  
 include "_shortcodes.php";
+include "utilities/_featured-image.php";
+include "utilities/_admin-bar-position.php";
