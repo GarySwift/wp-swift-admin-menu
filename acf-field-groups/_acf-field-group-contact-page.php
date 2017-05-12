@@ -155,6 +155,25 @@ Or you can remove the wrap using the false attribute.
 			'rows' => 5,
 			'new_lines' => 'br',
 		),
+		array (
+			'key' => 'field_59143534ff9b1',
+			'label' => 'Short Address',
+			'name' => 'short_address',
+			'type' => 'textarea',
+			'instructions' => 'Shortcode: [short_address]',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array (
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'placeholder' => '',
+			'maxlength' => '',
+			'rows' => 2,
+			'new_lines' => 'br',
+		),
 	),
 	'location' => array (
 		array (

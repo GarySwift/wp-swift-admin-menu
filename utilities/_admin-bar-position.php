@@ -59,16 +59,7 @@ function admin_bar_bottom() {
 		// Inject styling into the <head>
 		ob_start();
 		?><style type="text/css" media="screen">
-		    html { margin-top: 0px !important; }
-		    * html body { margin-top: 0px !important; }
-		    @media screen and ( max-width: 782px ) {
-		    html { margin-top: 0px !important; }
-		    * html body { margin-top: 0px !important; }
-		    }
-		    #wpadminbar {
-		        top:auto !important;
-		        bottom:0;
-		    }
+		#wpadminbar{top:auto;bottom:0}@media screen and (max-width: 600px){#wpadminbar{position:fixed}}#wpadminbar .menupop .ab-sub-wrapper,#wpadminbar .shortlink-input{bottom:32px}@media screen and (max-width: 782px){#wpadminbar .menupop .ab-sub-wrapper,#wpadminbar .shortlink-input{bottom:46px}}@media screen and (min-width: 783px){.admin-bar.masthead-fixed .site-header{top:0}}
 		</style><?php
 		$style = ob_get_contents();
 		ob_end_clean();
