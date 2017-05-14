@@ -31,7 +31,7 @@ $show_form_builder = class_exists('WP_Swift_Form_Builder_Plugin');
 	</h2>
 			
 	<form action='options.php' method='post'>
-
+	
 		<div id="table-wrapper">
 			<?php
 				if (function_exists( 'acf' )) {

@@ -1,5 +1,6 @@
 <?php
 function wp_swift_get_location() {
+	$options = get_option( 'wp_swift_utilities_settings' );
 	$location = array();
 	$post = array( array (
 		'param' => 'post_type',
@@ -11,8 +12,25 @@ function wp_swift_get_location() {
 		'operator' => '==',
 		'value' => 'page',
 	));
-	$location[] = $post;
-	$location[] = $page;
+	if (isset($options['acf_additional_fields_show_on_post']) && $options['acf_additional_fields_show_on_post']) {
+		$location[] = $post;
+	} 
+	if (isset($options['acf_additional_fields_show_on_page']) && $options['acf_additional_fields_show_on_page']) {
+		$location[] = $page;
+	} 
+	if (isset($options['acf_additional_fields_cpt']) && $options['acf_additional_fields_cpt']) {
+		$acf_additional_fields_cpt = $options['acf_additional_fields_cpt'];
+		$acf_additional_fields_cpt_array = explode(',', $acf_additional_fields_cpt);
+		foreach ($acf_additional_fields_cpt_array as $key => $post_type) {
+			if ($post_type !== 'post' && $post_type != 'page' && post_type_exists( $post_type )) {
+				$location[] = array( array (
+					'param' => 'post_type',
+					'operator' => '==',
+					'value' => $post_type,
+				));
+			}
+		}
+	} 		
 	return $location;
 }
 if( function_exists('acf_add_local_field_group') ):

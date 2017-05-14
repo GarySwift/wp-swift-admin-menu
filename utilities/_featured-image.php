@@ -7,14 +7,11 @@
  * @return - $image (array)
  */
 function get_featured_image($post_id=false) {
-global $post;
+	global $post;
 	if($post_id) {
-
 		$post=get_post($post_id);
 		setup_postdata( $post );
-		// $post_thumbnail_id = $post->ID;
 	}
-
 	$sizes = get_intermediate_image_sizes();
 	
 	$image=false;
@@ -43,28 +40,15 @@ global $post;
 	return $image;
 }
 
-function the_image($single_post=true, $display_size='large', $image_class='thumbnail') {
-	global $post;
+if (!function_exists('the_image')) {
+	function the_image($single_post=true, $display_size='large', $image_class='thumbnail') {
+		global $post;
 
-	// $sizes = array('medium_large', 'fp-small', 'fp-medium', 'fp-large', 'icon', 'letterbox', 'letterbox-medium' );
-
-	// if ( !$single_post && ( (get_post_format( $post_id ) != 'gallery') && (get_post_format( $post_id ) != 'video') ) ):
-		if( !$single_post && get_field('letterbox_image')) {
-	        $image = get_field('letterbox_image');
-	    	$image_small = $image['sizes']['medium_large'];
-	        $image_large = $image['url'];
-	        $image_link = $image['original_image']['sizes']['large'];		
-		}
-		else {
-			$image =  get_featured_image(); //$post->ID
-			if($image) {
-				$image_small = $image['sizes']['medium_large'];
-				$image_large = $image['sizes'][$display_size];
-				$image_link = $image['sizes']['large'];	
-			}	
-		}
-
-		if($image): 
+		$image =  get_featured_image();
+		if($image):
+			$image_small = $image['sizes']['medium_large'];
+			$image_large = $image['sizes'][$display_size];
+			$image_link = $image['sizes']['large'];	
 			?>
 			<div class="text-center">
 				<a href="<?php echo $image_link ?>" class="image-popup-vertical-fit" title="<?php the_title() ?><?php echo ($image['caption'] ? ' &vert; '.$image['caption']  : '' ) ?>">
@@ -73,5 +57,5 @@ function the_image($single_post=true, $display_size='large', $image_class='thumb
 			</div>
 			<?php 
 		endif;
-	// endif; 
+	}
 }

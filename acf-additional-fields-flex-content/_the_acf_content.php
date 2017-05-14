@@ -1,60 +1,4 @@
 <?php
-function wp_swift_the_post_hook( $post_object ) {    
-	$html='';
-	if (is_single()) {	
-		ob_start();
-		?><div class="callout secondary">
-			<h3>the_post Single Post</h3>
-			<p>Nemo unde magnam aspernatur ipsa, corporis eos minus, dolores quaerat quia voluptas placeat fugit quibusdam soluta quo officiis molestias eligendi vitae debitis.</p>
-		</div><?php
-
-		$html = ob_get_contents();
-		ob_end_clean();
-	}
-	else {
-		ob_start();
-		?><div class="callout primary">
-			<h3>the_post Posts News</h3>
-			<p>Nemo unde magnam aspernatur ipsa, corporis eos minus, dolores quaerat quia voluptas placeat fugit quibusdam soluta quo officiis molestias eligendi vitae debitis.</p>
-		</div><?php
-		$html = ob_get_contents();
-		ob_end_clean();		
-	}
-    echo $html;
-}
-// add_filter( 'the_post', 'wp_swift_the_post_hook' );
-require_once 'library/acf-additional-fields-flex-content/_the_acf_content.php';
-
-
-///////////////////////////
-// MOVE ADMIN BAR BOTTOM //
-///////////////////////////
-function admin_bar_bottom() {
-    echo 
-    '<style type="text/css" media="screen">
-    html { margin-top: 0px !important; }
-    * html body { margin-top: 0px !important; }
-    @media screen and ( max-width: 782px ) {
-    html { margin-top: 0px !important; }
-    * html body { margin-top: 0px !important; }
-    }
-    #wpadminbar {
-        top:auto !important;
-        bottom:0;
-    }
-    </style>';
-}
-
-// check if admin bar is enabled for the current user
-if ( is_admin_bar_showing() )
-{
-    // call styling into the <head>
-    add_action( 'wp_head', 'admin_bar_bottom', 9999 );
-}
-
-
-require_once '_acf-additional-fields-flex-content.php';
-
 function wp_swift_add_after_content( $content ) {   
 	$acf_content = the_acf_content();
     return $content.$acf_content;
@@ -69,7 +13,7 @@ function the_acf_content($image_size='', $row_class='') {
 
 	        if( get_row_layout() == 'video' ):
 
-	        	$acf_content = get_acf_video();//get_sub_field('video');
+	        	$acf_content = get_acf_video();
 
 	        elseif( get_row_layout() == 'gallery' ): 
 	        	if( get_sub_field('images') ) {
@@ -104,13 +48,11 @@ function get_acf_video($row_class='') {
 	    preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $url, $matches);
 		if (isset($matches[1])):
 			ob_start();
-			?>
-			<div class="row">
-				<div class="embed-container">
+			?><div class="row">
+				<div class="embed-container-placeholder">
 					<div class="youtube-player" data-id="<?php echo $matches[1] ?>"></div>
 				</div>
-			</div>
-			<?php
+			</div><?php
 			$acf_content = ob_get_contents();
 			ob_end_clean();
 		endif;//@end isset($matches[1])

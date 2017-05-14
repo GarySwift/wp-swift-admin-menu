@@ -60,6 +60,9 @@ class WP_Swift_Admin_Menu {
 
 		# Allow admins to extend the WYSIWYG
 		add_action( 'init', array($this, 'wp_swift_admin_menu_extend_wysiwyg') );
+
+				# Allow admins to extend the WYSIWYG
+		add_action( 'init', array($this, 'wp_swift_admin_menu_acf_additional_fields') );
     }
 
     /*
@@ -181,7 +184,6 @@ public function admin_notice_install_acf() {
 	    }
     }
 
-
     public function wp_swift_admin_menu_extend_wysiwyg() {
 	    $options = get_option( 'wp_swift_utilities_settings' );
 	    $option = 'extend_wysiwyg';
@@ -190,7 +192,33 @@ public function admin_notice_install_acf() {
 		}  
     }
 
+    public function wp_swift_admin_menu_featured_image() {
+	    $options = get_option( 'wp_swift_utilities_settings' );
+	    $option = 'featured_image';
+		if (isset($options[$option]) && $options[$option]) {
+			include "utilities/_featured-image.php";
+		}  
+    }
 
+    public function wp_swift_admin_menu_acf_additional_fields() {
+	    $options = get_option( 'wp_swift_utilities_settings' );
+	    $option = 'acf_additional_fields';
+		if (isset($options[$option]) && $options[$option]) {
+			require_once 'acf-additional-fields-flex-content/_acf-additional-fields-flex-content.php';
+			require_once 'acf-additional-fields-flex-content/_the_acf_content.php';
+		} 
+	    $option = 'acf_additional_fields_style_and_script';
+		if (isset($options[$option]) && $options[$option]) {
+			/*
+			 * Add the css file
+			 */
+			wp_enqueue_style('acf-additional-fields-css', plugins_url( 'acf-additional-fields-flex-content/assets/css/_youtube-embed-thumbnail.css', __FILE__ ) );
+			/*
+			 * Add the js file
+			 */
+			wp_enqueue_script( $handle='acf-additional-fields-js', $src=plugins_url( 'acf-additional-fields-flex-content/assets/js/_youtube-embed-thumbnail.js', __FILE__ ), $deps=null, $ver=null, $in_footer=true );
+		} 		 
+    }
 
 
 
@@ -483,6 +511,21 @@ public function admin_notice_install_acf() {
 			'wp_swift_admin_menu_utilities_page_section'
 		);		
 
+		add_settings_field( 
+			'acf_additional_fields', 
+			__( 'ACF Additional Fields', 'wp-swift-admin-menu' ), 
+			array($this, 'wp_swift_admin_menu_utilities_page_acf_additional_fields'), 
+			'utilities', 
+			'wp_swift_admin_menu_utilities_page_section'
+		);	
+
+		add_settings_field( 
+			'featured_image', 
+			__( 'Featured Image', 'wp-swift-admin-menu' ), 
+			array($this, 'wp_swift_admin_menu_utilities_featured_image'), 
+			'utilities', 
+			'wp_swift_admin_menu_utilities_page_section'
+		);	
 		/******************************************************************************
 		 *
 		 * Register the settings for the 'Help Page' tab
@@ -699,6 +742,90 @@ public function admin_notice_install_acf() {
 		?>><p class="desc">Creates a format select dropdown in the second row of the TinyMCE editor for handling <b>Zurb Foundation</b> CSS classes and container components.</p><?php
 	}
 
+	/*
+	 * Render checkbox that determines if "Add Media" button above the WYSIWYG editor is shown
+	 */
+	public function wp_swift_admin_menu_utilities_featured_image(  ) { 
+		$options = get_option( 'wp_swift_utilities_settings' );
+		?><input type="checkbox" value="1" name="wp_swift_utilities_settings[featured_image]" <?php 
+			if (isset($options['featured_image'])) {
+			 	checked( $options['featured_image'], 1 );
+			} 
+		?>><p class="desc">This is a helper function for developers does not do anything visible to users.</p><?php
+	}
+	/*
+	 * Render checkbox that determines if "Add Media" button above the WYSIWYG editor is shown
+	 */
+	public function wp_swift_admin_menu_utilities_page_acf_additional_fields(  ) { 
+		$options = get_option( 'wp_swift_utilities_settings' );
+		?><input type="checkbox" value="1" name="wp_swift_utilities_settings[acf_additional_fields]" <?php 
+			if (isset($options['acf_additional_fields'])) {
+			 	checked( $options['acf_additional_fields'], 1 );
+			} 
+		?>><span class="desc"><b>Use ACF Additional Fields</b></span>
+		<hr>
+		<input type="checkbox" value="1" name="wp_swift_utilities_settings[acf_additional_fields_style_and_script]" <?php 
+			if (isset($options['acf_additional_fields_style_and_script'])) {
+			 	checked( $options['acf_additional_fields_style_and_script'], 1 );
+			} 
+		?>><span class="desc">Load JavaScript and CSS from plugin <small>(Untick if you wish to handle this in the theme)</small></span>
+		<br>
+		<input type="checkbox" value="1" name="wp_swift_utilities_settings[acf_additional_fields_show_on_post]" <?php 
+			if (isset($options['acf_additional_fields_show_on_post'])) {
+			 	checked( $options['acf_additional_fields_show_on_post'], 1 );
+			} 
+		?>><span class="desc">Show on posts</span>
+		<br>
+		<input type="checkbox" value="1" name="wp_swift_utilities_settings[acf_additional_fields_show_on_page]" <?php 
+			if (isset($options['acf_additional_fields_show_on_page'])) {
+			 	checked( $options['acf_additional_fields_show_on_page'], 1 );
+			} 
+		?>><span class="desc">Show on pages</span>
+		<br>
+		<input type="text" placeholder="testimonal, faq" name="wp_swift_utilities_settings[acf_additional_fields_cpt]" <?php 
+			if (isset($options['acf_additional_fields_cpt'])) {
+			 	echo ' value="'.$options['acf_additional_fields_cpt'].'"';
+			} 
+		?>><span class="desc">Additional post types <small>(Comma seperated list)</small></span>
+		<br>
+		<p>Use ACF Additional Fields to allow users select media such as galleries and video.</p><?php
+
+
+ 
+$all_post_types = get_post_types( '', 'names' );
+
+// echo "<pre>"; var_dump($post_types); echo "</pre>";
+// echo "<pre>"; var_dump($all_post_types); echo "</pre>";
+foreach ( $all_post_types as $post_type ) {
+
+	if (in_array($post_type, $all_post_types)) {
+		// echo '<p>' . $post_type . '</p>';
+	}
+}
+
+$ignore_post_types = array(
+	'attachment',
+	'revision',
+	'nav_menu_item',
+	'custom_css',
+	'customize_changeset',
+	'acf-field-group',
+	'acf-field',
+);
+
+
+$args = array(
+   'public'   => true,
+   '_builtin' => false
+);
+$output = 'names'; // names or objects, note names is the default
+$operator = 'and'; // 'and' or 'or'
+
+$post_types = get_post_types( $args, $output, $operator ); 
+// echo "<pre>"; var_dump($post_types); echo "</pre>";
+
+	}
+
 	/******************************************************************************
 	 *
 	 * Render the description and help content that show on 
@@ -734,16 +861,20 @@ public function admin_notice_install_acf() {
 	# @end Render 'Settings' page -> 'Help Page'
 }
 $wp_swift_admin_menu = new WP_Swift_Admin_Menu();
-register_activation_hook( __FILE__, array( 'WP_Swift_Admin_Menu', 'wp_swift_admin_menu_plugin_install' ) ); 
-register_deactivation_hook( __FILE__, array( 'WP_Swift_Admin_Menu', 'wp_swift_admin_menu_plugin_deactivate' ) );    
-/*
- * Include the function that will render the google map
- */    
-include "wp-swift-google-map.php";
+register_activation_hook( __FILE__, array( 'WP_Swift_Admin_Menu', 'wp_swift_admin_menu_plugin_install' ) );
+register_deactivation_hook( __FILE__, array( 'WP_Swift_Admin_Menu', 'wp_swift_admin_menu_plugin_deactivate' ) );
 
 /*
  * Include the functions that render shortcodes
  */  
 include "_shortcodes.php";
-include "utilities/_featured-image.php";
+
+/*
+ * Allow users put admin bar on bottom (visible in the profile area)
+ */
 include "utilities/_admin-bar-position.php";
+
+/*
+ * Include the function that will render the google map
+ */    
+include "wp-swift-google-map.php";
