@@ -62,9 +62,29 @@ if ( !function_exists('get_phone') )  {
     	return '';
     }	
 }
-
+/*
+ * Parse the number into a valid dialable number
+ */
 function parse_phone_number($phone_num) {
-	$phone_num = str_replace('(0)', '', $phone_num);
-	$phone_num = str_replace(' ', '', $phone_num);	
+	$firstchar = mb_substr($phone_num,1,1);
+	if ($firstchar === '0') {
+		/*
+		 * If the first character is 0, we assume the country is Ireland
+		 * and append the country code +353 (and drop the 0)
+		 */		
+		$rest =  mb_substr($phone_num,2);
+		$phone_num = '+353'.$rest;
+		$phone_num = str_replace(' ', '', $phone_num);
+	}
+	else {
+		/*
+		 * Else we parse the string and remove spaces and brackets
+		 */		
+		$phone_num = str_replace('(0)', '', $phone_num);
+		$phone_num = str_replace(' ', '', $phone_num);			
+	}
+	/*
+	 * Return the valid dialable number
+	 */
 	return $phone_num;
 }

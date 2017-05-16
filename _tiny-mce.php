@@ -71,7 +71,13 @@ function foundationpress_before_tiny_mce_init_insert_formats( $init_array ) {
 			'title' => 'clearfix',  
 			'block' => 'div',  
 			'classes' => 'clearfix',
-		),			
+		),	
+		array(  
+			'title' => 'Checked Checklist',  
+			'block' => 'div',  
+			'classes' => 'checklist',
+			'wrapper' => true,
+		),				
 	);  
 
 	// Insert the array, JSON ENCODED, into 'style_formats'

@@ -48,6 +48,23 @@ function register_mobile_shortcode() {
 add_action( 'init', 'register_mobile_shortcode');
 
 /*
+ * Mobile Shortcode
+ */
+function shortcode_phone($atts = array(), $content = null, $tag = '') {
+	$value = '';
+	if ( function_exists('get_phone') )  {
+	    $phone_readable = get_phone('office_phone');
+	    $phone = get_phone('office_phone', true);
+		$value = '<span class="key-value phone"><span class="key">Tel: </span><span class="value"><a href="tel:'.$phone.'">'.$phone_readable.'</a></span></span>';
+	}
+	return generic_shortcode_wrap($value, $atts);
+}
+function register_phone_shortcode() {
+  add_shortcode('phone', 'shortcode_phone');
+}
+add_action( 'init', 'register_phone_shortcode');
+
+/*
  * Check for generic attributes
  */
 function generic_shortcode_wrap($value='', $atts = array(), $content = null, $tag = '') {

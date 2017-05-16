@@ -63,6 +63,9 @@ class WP_Swift_Admin_Menu {
 
 				# Allow admins to extend the WYSIWYG
 		add_action( 'init', array($this, 'wp_swift_admin_menu_acf_additional_fields') );
+
+						# Allow admins to extend the WYSIWYG
+		add_action( 'init', array($this, 'wp_swift_admin_menu_featured_image') );
     }
 
     /*
