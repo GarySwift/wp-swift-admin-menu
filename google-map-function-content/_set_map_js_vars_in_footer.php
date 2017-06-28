@@ -1,6 +1,6 @@
 <?php
 $options = get_option( 'wp_swift_google_map_settings' );
-$map_zoom_level=14;
+$map_zoom_level=10;
 $map_style = false;/* Go to https://snazzymaps.com/ [Snazzy Maps] for map styles */
 
 if (isset($options['show_sidebar_options_google_map_style'])) {

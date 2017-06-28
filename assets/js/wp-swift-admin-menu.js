@@ -1,3 +1,4 @@
+var google_map_executed = false;
 jQuery(document).ready(function($){
 	'use strict';
 	console.log("wp-swift-admin-menu");
@@ -66,9 +67,33 @@ jQuery(document).ready(function($){
 		}
 	}
 	$(document).ready(function(){
-		$('.acf-map').each(function(){
-			render_map( $(this) );
+		// $('.acf-map').each(function(){
+		// 	render_map( $(this) );
+		// });
+
+		var $map = $("#google-map");
+		var $showMapButton = $("#show-map-button");
+		var $closeMapButton = $("#close-map-button");
+		var $closeMapDiv = $("#close-map-wrapper"); 
+		$map.hide().removeClass("hide");
+		$closeMapDiv.hide().removeClass("hide");
+
+		$showMapButton.click(function() {
+			// $map.hide().removeClass("hide");
+			$map.slideToggle(function() {
+			$closeMapDiv.toggle();
+				if (!google_map_executed) {
+					render_map( $(this) );
+		            google_map_executed = true;
+
+		        }
+			});
 		});
+		$closeMapButton.click(function() {
+			$map.slideUp();
+			$closeMapDiv.hide();
+		});  
+
 	});
 	//@end google maps
 });

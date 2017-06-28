@@ -8,6 +8,7 @@ add_filter( 'the_content', 'wp_swift_add_after_content' );
 
 /** Custom Functions */
 function the_acf_content($image_size='', $row_class='') {
+	$acf_content = '';
 	if( have_rows('modules') ):
 	    while ( have_rows('modules') ) : the_row();
 
@@ -67,7 +68,8 @@ function get_acf_gallery($images, $row_class='') {
 	$limit = count($images);
 
 	// Limit the amount of images shown if shown in blog view to save loading time
-	if(!is_single()) {
+	$single_post = is_single();
+	if(!$single_post) {
 		$limit=4;
 		$totalImgs = count($images);
 		if($totalImgs>$limit) {
@@ -75,7 +77,7 @@ function get_acf_gallery($images, $row_class='') {
 		}	
 	} 
 
-	$thumbnail_size = 'thumbnail_large';
+	$thumbnail_size = 'medium_large';
 	if (!$row_class) {
 		$row_class= 'small-up-2 medium-up-3 large-up-2';
 	}

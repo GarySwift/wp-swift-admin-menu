@@ -355,7 +355,7 @@ public function admin_notice_install_acf() {
 	        /*
 	         * This is a top level page outside the main menu
 	         */
-	        $show_sidebar_options_test_page=true;
+	        $show_sidebar_options_test_page=false;
 	    	if($show_sidebar_options_test_page || $this->show_sidebar_option('show_sidebar_options_test_page')) {
 		    	$test_args = array(
 					'page_title' => 'Test Page - For Developent purposes Only!',
