@@ -67,10 +67,9 @@ jQuery(document).ready(function($){
 		}
 	}
 	$(document).ready(function(){
-		// $('.acf-map').each(function(){
-		// 	render_map( $(this) );
-		// });
-
+		$('.acf-map').each(function(){
+			render_map( $(this) );
+		});
 		var $map = $("#google-map");
 		var $showMapButton = $("#show-map-button");
 		var $closeMapButton = $("#close-map-button");

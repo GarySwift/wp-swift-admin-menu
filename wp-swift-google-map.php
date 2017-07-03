@@ -9,6 +9,10 @@
  */
 if ( !function_exists('get_google_map') )  {
     function get_google_map( $attributes=null, $content = null ) {
+    	$class = 'acf-map';
+    	if (isset($attributes['class'])) {
+    		$class = $attributes['class'];
+    	}
     	$options = get_option( 'wp_swift_google_map_settings' );
         ob_start();
 
@@ -21,7 +25,7 @@ if ( !function_exists('get_google_map') )  {
 					<p><?php echo $location['address']; ?></p>
 				<?php endif ?>
 				
-				<div class="acf-map">
+				<div class="<?php echo $class; ?>">
 					<div class="marker" data-lat="<?php echo $location['lat']; ?>" data-lng="<?php echo $location['lng']; ?>"></div>
 				</div>
 			<?php endif; ?>
