@@ -141,7 +141,7 @@ Or you can remove the wrap using the false attribute.
 			'label' => 'Address',
 			'name' => 'address',
 			'type' => 'textarea',
-			'instructions' => 'Shortcode: [address]',
+			'instructions' => 'Shortcodes: [address], [address name description]',
 			'required' => 0,
 			'conditional_logic' => 0,
 			'wrapper' => array (

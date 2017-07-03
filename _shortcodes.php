@@ -20,10 +20,21 @@ add_action( 'init', 'register_email_shortcode');
  */
 function shortcode_address($atts = array(), $content = null, $tag = '') {
 	$value = '';
-	if( get_field('address' , 'option') ) {
-		$value = get_field('address' , 'option');
+	$site = array(
+		'name' => get_bloginfo('name'),
+		'description' => get_bloginfo('description'),
+	);
+	if (in_array('name', $atts)) {
+		$value = $site['name'].'<br>';
 	}
-	return generic_shortcode_wrap($value, $atts);  
+	if (in_array('description', $atts)) {
+		$value .= $site['description'].'<br>';
+	}
+
+	if( get_field('address' , 'option') ) {
+		$value .= get_field('address' , 'option');
+	}
+	return '<p>'.$value.'</p>';
 }
 function register_address_shortcode() {
   add_shortcode('address', 'shortcode_address');
