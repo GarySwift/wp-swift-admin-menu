@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: 		WP Swift: Admin Menu
+Plugin Name: 		WP Swift: WordPress Toolbox
 Plugin URI:         https://github.com/GarySwift/wp-swift-admin-menu
-Description: 		Creates a top level menu item in the admin sidebar.
-Version:           	1.0.0
+Description: 		Creates a top level menu item in the admin sidebar along submenu pages for Google Maps, Social Media, Opening Hours, Contact Form etc.
+Version:           	1.0.1
 Author:            	Gary Swift
 Author URI:        	https://github.com/GarySwift
 License:            GPL-2.0+
@@ -20,16 +20,13 @@ class WP_Swift_Admin_Menu {
      * Initializes the plugin.
      */
     public function __construct() {
-
-    	# Register the Google API key to use with Advanced Custum Fields
-		add_action('acf/init', array($this, 'wp_swift_acf_init'));
 			
-    	add_action( 'wp_enqueue_scripts', array($this, 'wp_swift_admin_menu_css_file') );
+    	
 		add_action( 'wp_enqueue_scripts', array($this, 'enqueue_javascript') );
 
 		add_action('admin_footer', array($this, 'enqueue_admin_javascript'));
 
-
+		add_action( 'wp_enqueue_scripts', array($this, 'wp_swift_admin_menu_css_file') );
 		add_action( 'admin_enqueue_scripts', array($this, 'wp_swift_admin_menu_css_file_admin_style' ));//wp-swift-admin-menu-css-file-admin-style
 
     	add_action( 'admin_menu', array($this, 'wp_swift_admin_menu_add_admin_menu') );
@@ -41,19 +38,15 @@ class WP_Swift_Admin_Menu {
     	add_action( 'admin_notices', array($this, 'admin_notice_install_acf') );
 
     	# Register ACF field groups that will appear on the options pages
-		add_action( 'init', array($this, 'acf_add_local_field_group_google_map') );
+		// add_action( 'init', array($this, 'acf_add_local_field_group_google_map') );
 		add_action( 'init', array($this, 'acf_add_local_field_group_social_media') );
 		add_action( 'init', array($this, 'acf_add_local_field_group_contact_details') );
 
-		# Shortcodes for rendering the google maps.
-        // add_shortcode( 'wp-swift-google-map', array( $this, 'render_google_map' ) );
-        add_shortcode( 'google-map', array( $this, 'render_google_map' ) );	
 
-        # enqueue the google maps API in the footer
-		add_action( 'init', array($this, 'enqueue_assets_googleapis_maps') );
 
-		# Create the JavaScript variables used in the Google Maps API directly in the footer
-		add_action('wp_footer', array($this, 'set_map_js_vars_in_footer'));
+
+
+
 
 		# Allow admin remove the "Add Media" button above the WYSIWYG editor for non admins
 		add_action( 'admin_head', array($this, 'wp_swift_admin_menu_maybe_remove_add_media_button') );
@@ -97,33 +90,7 @@ class WP_Swift_Admin_Menu {
 		// }
 	}
 
-	/*
-	 * Retun the API key if it was set
-	 */
-	public function get_api_key() {
-		// if (get_field('google_api_key', 'option')) {
-		// 	return get_field('google_api_key', 'option');
-		// } else {
-		// 	return false;
-		// }
-		$options = get_option( 'wp_swift_google_map_settings' );
-		if (isset($options['show_sidebar_options_google_map_api_key']) && $options['show_sidebar_options_google_map_api_key'] !== '') {
-			return $options['show_sidebar_options_google_map_api_key'];
-		}
-		return false;		
-	}
-	/*
-	 * It is necessary to register a Google API key in order to allow the Google API to load correctly. 
-	 *
-	 * Ref: https://www.advancedcustomfields.com/resources/google-map/
-	 *
-	 */
-	public function wp_swift_acf_init() {
-		$google_api_key = $this->get_api_key();
-		if( $google_api_key ) {
-			acf_update_setting('google_api_key', $google_api_key);
-		}		
-	}
+
 
 // Displays a notice if the Advanced Custom Fields plugin is not active.
 public function admin_notice_install_acf() {
@@ -168,7 +135,7 @@ public function admin_notice_install_acf() {
      * Add the JavaScript file
      */
     public function enqueue_admin_javascript () {
-        wp_enqueue_script( $handle='wp-swift-admin-menu', $src=plugins_url( '/assets/js/wp-swift-admin-menu-backend.js', __FILE__ ), $deps=null, $ver=null, $in_footer=true );
+        // wp_enqueue_script( $handle='wp-swift-admin-menu', $src=plugins_url( '/assets/js/wp-swift-admin-menu-backend.js', __FILE__ ), $deps=null, $ver=null, $in_footer=true );
         // wp_enqueue_script( $handle='wp-swift-syntaxhighlighter', $src=plugins_url( '/libraries/brush-php/brush.js', __FILE__ ), $deps=null, $ver=null, $in_footer=true );
         wp_enqueue_script( $handle='wp-swift-syntax-prettify', 'https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js', $deps=null, $ver=null, $in_footer=true );
     }
@@ -237,43 +204,7 @@ public function admin_notice_install_acf() {
 		return false;
 	}
 
-    /**
-     * Create the JavaScript variables used in the Google Maps API.
-     * It will create a <script> block in the 'footer.php' that will be use in the 
-     * API. 
-     *
-     * @setting map_zoom_level
-     * @setting map_style
-     * @setting contentString
-     */
-    public function set_map_js_vars_in_footer() {
-    	include "google-map-function-content/_set_map_js_vars_in_footer.php";
-    }
-    /**
-     * A shortcode for rendering the google map.
-     *
-     * @param  array   $attributes  Shortcode attributes.
-     * @param  string  $content     The text content for shortcode. Not used.
-     *
-     * @return string  The shortcode output
-     */
-	public function render_google_map( $attributes=null, $content = null ) {
-		if ( function_exists('get_google_map') )  {
-    		return get_google_map( $attributes, $content );
-    	}
-	}
-	/*
-	 * Enqueue the google maps API in the footer
-	 */
-	public function enqueue_assets_googleapis_maps() {
-		include "google-map-function-content/_enqueue_assets_googleapis_maps.php";
-	}	
-	/*
-	 * The ACF field group for 'Google Map'
-	 */	
-	public function acf_add_local_field_group_google_map() {
-		include "acf-field-groups/_acf-field-group-google-map.php";
-	}
+
 
 	/*
 	 * The ACF field group for 'Contact Details'
@@ -335,24 +266,24 @@ public function admin_notice_install_acf() {
 	                'parent' => $this->menu_slug,
 	            ));
 	        }
-		    if($this->show_sidebar_option('show_sidebar_options_google_map')) {
-	            acf_add_options_sub_page(array(
-	                'title' => 'Google Map',
-	                'slug' => 'google-map',
-	                'parent' => $this->menu_slug,
-	            )); 
-	        }        
-		    if($this->show_sidebar_option('show_sidebar_options_opening_hours')) {
-	            acf_add_options_sub_page(array(
-	                'title' => 'Opening Hours',
-	                'slug' => 'opening-hours',
-	                'parent' => $this->menu_slug,
-	            )); 
-	        }
+		    // if($this->show_sidebar_option('show_sidebar_options_google_map')) {
+	     //        acf_add_options_sub_page(array(
+	     //            'title' => 'Google Map',
+	     //            'slug' => 'google-map',
+	     //            'parent' => $this->menu_slug,
+	     //        )); 
+	     //    }        
+		    // if($this->show_sidebar_option('show_sidebar_options_opening_hours')) {
+	     //        acf_add_options_sub_page(array(
+	     //            'title' => 'Opening Hours',
+	     //            'slug' => 'opening-hours',
+	     //            'parent' => $this->menu_slug,
+	     //        )); 
+	     //    }
 	        /*
 	         * This is a top level page outside the main menu
 	         */
-	        $show_sidebar_options_test_page=true;
+	        $show_sidebar_options_test_page=false;
 	    	if($show_sidebar_options_test_page || $this->show_sidebar_option('show_sidebar_options_test_page')) {
 		    	$test_args = array(
 					'page_title' => 'Test Page - For Developent purposes Only!',
@@ -428,38 +359,38 @@ public function admin_notice_install_acf() {
 			'wp_swift_admin_menu_menu_options_section' 
 		);		
 
-		/******************************************************************************
-		 *
-		 * Register the settings for the 'Google Maps' tab
-		 *
-		 ******************************************************************************/	
+		// /******************************************************************************
+		//  *
+		//  * Register the settings for the 'Google Maps' tab
+		//  *
+		//  ******************************************************************************/	
 
-		register_setting( 'google-map', 'wp_swift_google_map_settings' );
+		// register_setting( 'google-map', 'wp_swift_google_map_settings' );
 
-		add_settings_section(
-			'wp_swift_admin_menu_google_map_page_section', 
-			__( 'Google Map Settings', 'wp-swift-admin-menu' ), 
-			array($this, 'wp_swift_admin_menu_google_map_section_callback'), 
-			'google-map'
-		);
+		// add_settings_section(
+		// 	'wp_swift_admin_menu_google_map_page_section', 
+		// 	__( 'Google Map Settings', 'wp-swift-admin-menu' ), 
+		// 	array($this, 'wp_swift_admin_menu_google_map_section_callback'), 
+		// 	'google-map'
+		// );
 
-		add_settings_field( 
-			'show_sidebar_options_google_map_api_key', 
-			__( 'Google Map API key', 'wp-swift-admin-menu' ), 
-			array($this, 'show_sidebar_options_google_map_api_key_render'), 
-			'google-map', 
-			'wp_swift_admin_menu_google_map_page_section',
-			array( 'label_for' => 'google-map-api-key' )
-		);
+		// add_settings_field( 
+		// 	'show_sidebar_options_google_map_api_key', 
+		// 	__( 'Google Map API key', 'wp-swift-admin-menu' ), 
+		// 	array($this, 'show_sidebar_options_google_map_api_key_render'), 
+		// 	'google-map', 
+		// 	'wp_swift_admin_menu_google_map_page_section',
+		// 	array( 'label_for' => 'google-map-api-key' )
+		// );
 
-		add_settings_field( 
-			'show_sidebar_options_google_map_style', 
-			__( 'Google Map Style', 'wp-swift-admin-menu' ), 
-			array($this, 'show_sidebar_options_google_map_style_render'), 
-			'google-map', 
-			'wp_swift_admin_menu_google_map_page_section',
-			array( 'label_for' => 'google-map-style' ) 
-		);
+		// add_settings_field( 
+		// 	'show_sidebar_options_google_map_style', 
+		// 	__( 'Google Map Style', 'wp-swift-admin-menu' ), 
+		// 	array($this, 'show_sidebar_options_google_map_style_render'), 
+		// 	'google-map', 
+		// 	'wp_swift_admin_menu_google_map_page_section',
+		// 	array( 'label_for' => 'google-map-style' ) 
+		// );
 
 
 /*
@@ -540,13 +471,13 @@ public function admin_notice_install_acf() {
 			'help-page'
 		);
 
-		add_settings_field( 
-			'show_help_google_map', 
-			__( 'Google Map', 'wp-swift-admin-menu' ), 
-			array($this, 'wp_swift_admin_menu_help_page_google_map_render'), 
-			'help-page', 
-			'wp_swift_admin_menu_help_page_section'
-		);
+		// add_settings_field( 
+		// 	'show_help_google_map', 
+		// 	__( 'Google Map', 'wp-swift-admin-menu' ), 
+		// 	array($this, 'wp_swift_admin_menu_help_page_google_map_render'), 
+		// 	'help-page', 
+		// 	'wp_swift_admin_menu_help_page_section'
+		// );
 
 
 		add_settings_field( 
@@ -654,53 +585,7 @@ public function admin_notice_install_acf() {
 
 	# @end Render 'Settings' page -> 'Menu Options' tab
 
-	/******************************************************************************
-	 *
-	 * Render the description and inputs that show on 
-	 * the 'Settings' page -> 'Google Map' tab
-	 *
-	 ******************************************************************************/
 
-	/*
-	 * The description for the 'Google Map' tab
-	 */
-	public function wp_swift_admin_menu_google_map_section_callback(  ) { 
-		echo __( 'Use the fields below to set additional settings for Google Maps.', 'wp-swift-admin-menu' );
-	}
-
-	/*
-	 * Render input field that allows the user to add a Google Maps API key
-	 */
-	public function show_sidebar_options_google_map_api_key_render(  ) { 
-		$options = get_option( 'wp_swift_google_map_settings' );
-		$readonly = '';
-		if(!$this->show_sidebar_option('show_sidebar_options_google_map')) {
-	 		$readonly = ' readonly';
-		}
-		?><input type="text" size="50" id="google-map-api-key" class="google-map-toggle-readonly" name="wp_swift_google_map_settings[show_sidebar_options_google_map_api_key]" value="<?php if (isset($options['show_sidebar_options_google_map_api_key'])) echo $options['show_sidebar_options_google_map_api_key']; ?>"<?php echo $readonly; ?>>
-		<p><i><small>This is required and maps will not render without it.</small></i></p><?php
-	}
-	
-	/*
-	 * Render textarea that allows the user to add a snazzy map json config
-	 */
-	public function show_sidebar_options_google_map_style_render(  ) { 
-		$options = get_option( 'wp_swift_google_map_settings' );
-		$readonly = '';
-		if(!$this->show_sidebar_option('show_sidebar_options_google_map')) {
-	 		$readonly = ' readonly';
-		}
-		?><textarea cols="49" rows="5" wrap="soft" id="google-map-style" class="google-map-toggle-readonly" name="wp_swift_google_map_settings[show_sidebar_options_google_map_style]"<?php echo $readonly; ?>><?php 
-			if (isset($options['show_sidebar_options_google_map_style'])) {
-				echo trim($options['show_sidebar_options_google_map_style']);
-			} 
-		?></textarea>
-	 	<?php if (!$readonly): ?>
-	 		<p class="google-map-toggle-show"><small><i>Maps styles are available at </i><a href="https://snazzymaps.com/" target="_blank">Snazzy Maps</a>.</small></p>
-	 	<?php endif;
-	}
-
-	# @end Render 'Settings' page -> 'Google Map' tab
 
 
 
@@ -850,9 +735,9 @@ $post_types = get_post_types( $args, $output, $operator );
 	/*
 	 * Render help content for google map page
 	 */
-	public function wp_swift_admin_menu_help_page_google_map_render() {
-		include "help-page-partials/_google-map.php";
-	}
+	// public function wp_swift_admin_menu_help_page_google_map_render() {
+	// 	include "help-page-partials/_google-map.php";
+	// }
 
 	public function wp_swift_admin_menu_help_page_social_media_render() {
 		include "help-page-partials/_social-media.php";
@@ -877,4 +762,46 @@ include "utilities/_admin-bar-position.php";
 /*
  * Include the function that will render the google map
  */    
-include "wp-swift-google-map.php";
+// include "wp-swift-google-map.php";
+
+
+
+/*
+ * Include the class that will render opening hours
+ */   
+// if(wp_swift_show_sidebar_option('show_sidebar_options_opening_hours')) { 
+// 	include "opening-hours/class-opening-hours.php";
+// }
+/*
+ * Include the class that will render opening hours
+ */   
+if(wp_swift_show_sidebar_option('show_sidebar_options_google_map')) { 
+	include "google-maps/class-google-maps.php";
+}
+/**
+ * A helper fuction that tests if an option is set
+ *
+ * @param  string  $option     	The text content for shortcode. Not used.
+ *
+ * @return boolean				If the option is set   
+ */
+function wp_swift_show_sidebar_option($option) {
+	$options = get_option( 'wp_swift_admin_menu_settings' );
+	if (isset($options[$option]) && $options[$option]) {
+		return true;
+	}
+	return false;
+}
+
+/*
+ * This determines the location the menu links
+ * They are listed under Settings unless the other plugin 'wp_swift_admin_menu' is activated
+ */
+function wp_swift_get_parent_slug() {
+    if ( get_option( 'wp_swift_admin_menu' ) ) {
+        return get_option( 'wp_swift_admin_menu' );
+    }
+    else {
+        return 'options-general.php';
+    }
+}

@@ -1,0 +1,5 @@
+/* Plain old CSS - not overridden by sass/compass */
+label[for="google-map-api-key"]::after {
+	content: "*";
+	color: #C5000C;
+}

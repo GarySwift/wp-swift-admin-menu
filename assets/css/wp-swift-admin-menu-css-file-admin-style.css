@@ -1,5 +1,5 @@
 /* Plain old CSS - not overridden by sass/compass */
-label.disabled {
+/*label.disabled {
    color: #AEAEAE;
 }
 label[for="google-map-api-key"]::after {
@@ -16,7 +16,7 @@ table.map-disabled label {
 #table-wrapper.map-disabled label[for="google-map-api-key"], #table-wrapper.map-disabled label[for="google-map-style"], label.disabled{
    color: #AEAEAE;
 }
-
+*/
 pre.prettyprint {
 	background-color: #FCFCFC;
 	border-color: #C7C7C7;

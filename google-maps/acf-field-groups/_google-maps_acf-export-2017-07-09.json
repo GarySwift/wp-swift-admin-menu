@@ -1,0 +1,119 @@
+[
+    {
+        "key": "group_59612c4191e29",
+        "title": "Google Map",
+        "fields": [
+            {
+                "key": "field_59612c4b9f1c0",
+                "label": "Map",
+                "name": "map",
+                "type": "google_map",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "center_lat": "52.259320",
+                "center_lng": "-7.110070",
+                "zoom": 16,
+                "height": ""
+            },
+            {
+                "key": "field_59612cd69f1c2",
+                "label": "Directions",
+                "name": "directions",
+                "type": "repeater",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "collapsed": "field_59612ce99f1c3",
+                "min": 0,
+                "max": 8,
+                "layout": "block",
+                "button_label": "Add Directions",
+                "sub_fields": [
+                    {
+                        "key": "field_59612ce99f1c3",
+                        "label": "From Location",
+                        "name": "from_location",
+                        "type": "text",
+                        "instructions": "",
+                        "required": 1,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": "",
+                        "placeholder": "",
+                        "prepend": "",
+                        "append": "",
+                        "maxlength": ""
+                    },
+                    {
+                        "key": "field_59612d139f1c4",
+                        "label": "Directions",
+                        "name": "directions",
+                        "type": "wysiwyg",
+                        "instructions": "",
+                        "required": 1,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "",
+                            "class": "",
+                            "id": ""
+                        },
+                        "default_value": "",
+                        "tabs": "visual",
+                        "toolbar": "basic",
+                        "media_upload": 0,
+                        "delay": 0
+                    }
+                ]
+            },
+            {
+                "key": "field_59612c909f1c1",
+                "label": "Notes",
+                "name": "",
+                "type": "message",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "message": "Message goes here",
+                "new_lines": "",
+                "esc_html": 0
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "options_page",
+                    "operator": "==",
+                    "value": "google-map"
+                }
+            ]
+        ],
+        "menu_order": 0,
+        "position": "normal",
+        "style": "seamless",
+        "label_placement": "top",
+        "instruction_placement": "label",
+        "hide_on_screen": "",
+        "active": 1,
+        "description": ""
+    }
+]

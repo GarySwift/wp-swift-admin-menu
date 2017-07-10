@@ -1,6 +1,6 @@
 <?php 
 $options = get_option( 'wp_swift_admin_menu_settings' ); 
-$show_contact_form = class_exists('WP_Swift_Form_Builder_Contact_Form');
+$show_contact_form = false;//class_exists('WP_Swift_Form_Builder_Contact_Form');
 $show_form_builder = class_exists('WP_Swift_Form_Builder_Plugin');
 ?>
 <div id="wp-swift-admin-menu-options-page" class="wrap">
@@ -55,11 +55,11 @@ $show_form_builder = class_exists('WP_Swift_Form_Builder_Plugin');
 						do_settings_sections( 'form-builder' );
 						submit_button();
 					}					
-					elseif ($show_contact_form && $active_tab == 'contact-form'){
-						settings_fields( 'contact-form' );
-						do_settings_sections( 'contact-form' );
-						submit_button();
-					}
+					// elseif ($show_contact_form && $active_tab == 'contact-form'){
+					// 	settings_fields( 'contact-form' );
+					// 	do_settings_sections( 'contact-form' );
+					// 	submit_button();
+					// }
 					elseif ($active_tab == 'help-page'){
 						settings_fields( 'help-page' );
 						do_settings_sections( 'help-page' );
