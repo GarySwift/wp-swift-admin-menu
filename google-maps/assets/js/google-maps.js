@@ -1,6 +1,5 @@
 jQuery(document).ready(function($){
 	'use strict';
-	console.log('//@start google maps');
 	//@start google maps
 	function render_map( $el ) {
 		var $markers = $el.find('.marker');

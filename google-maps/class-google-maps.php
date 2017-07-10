@@ -123,7 +123,7 @@ class WP_Swift_Google_Maps {
         // $options = get_option( 'wp_swift_admin_menu_settings' );
         
         // if (isset($options['wp_swift_admin_menu_checkbox_javascript'])==false) {
-           wp_enqueue_script( $handle='wp-swift-google-maps', $src=plugins_url( '/assets/js/wp-swift-admin-menu.js', __FILE__ ), $deps=null, $ver=null, $in_footer=true );
+           wp_enqueue_script( $handle='wp-swift-google-maps', $src=plugins_url( '/assets/js/google-maps.js', __FILE__ ), $deps=null, $ver=null, $in_footer=true );
         // }
     }
     /*

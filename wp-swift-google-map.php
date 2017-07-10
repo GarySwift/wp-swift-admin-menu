@@ -1,7 +1,4 @@
 <?php
-<<<<<<< HEAD
-
-=======
 /**
  * A shortcode for rendering the google map.
  *
@@ -10,6 +7,7 @@
  *
  * @return string  The shortcode output
  */
+/*
 if ( !function_exists('get_google_map') )  {
     function get_google_map( $attributes=null, $content = null ) {
     	$class = 'acf-map';
@@ -43,9 +41,7 @@ if ( !function_exists('get_google_map') )  {
         return $html;
     }	
 }
->>>>>>> db9ccac846208dd25d328005e49659bf1fdb0126
-
-
+*/
 
 
 /**

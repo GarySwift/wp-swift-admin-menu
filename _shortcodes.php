@@ -24,10 +24,10 @@ function shortcode_address($atts = array(), $content = null, $tag = '') {
 		'name' => get_bloginfo('name'),
 		'description' => get_bloginfo('description'),
 	);
-	if (in_array('name', $atts)) {
+	if ( is_array($atts) && in_array('name', $atts)) {
 		$value = $site['name'].'<br>';
 	}
-	if (in_array('description', $atts)) {
+	if (is_array($atts) && in_array('description', $atts)) {
 		$value .= $site['description'].'<br>';
 	}
 
