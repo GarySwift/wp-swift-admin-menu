@@ -502,7 +502,7 @@ public function admin_notice_install_acf() {
 
 	/******************************************************************************
 	 *
-	 * Render the top level menu page tabs. All other items will be rendered undr this
+	 * Render the top level menu page tabs. All other items will be rendered under this
 	 *
 	 ******************************************************************************/
 	public function wp_swift_admin_menu_options_page_render(  ) { 
