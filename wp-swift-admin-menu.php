@@ -761,7 +761,7 @@ include "_shortcodes.php";
  * Allow users put admin bar on bottom (visible in the profile area)
  */
 include "utilities/_admin-bar-position.php";
-
+include "get-phone.php";
 /*
  * Include the function that will render the google map
  */    
