@@ -79,7 +79,7 @@ function get_acf_gallery($images, $row_class='') {
 
 	$thumbnail_size = 'medium_large';
 	if (!$row_class) {
-		$row_class= 'small-up-2 medium-up-3 large-up-2';
+		$row_class= 'small-up-2 medium-up-2 large-up-2';
 	}
 	
 	if (!$single_post) {
@@ -93,9 +93,17 @@ function get_acf_gallery($images, $row_class='') {
 		foreach( $images as $image ): 
             $defaultImgCaption = '';
             $defaultImgTitle = '';
+            $image_caption = '';
+			if (isset($image['caption']) && $image['caption']) {
+				$image_caption = ' title="'.$image['caption'].'"';
+			}
+			elseif (isset($image['alt']) && $image['alt']) { 
+				$image_caption = ' title="'.$image['alt'].'"';
+			}
+
 	    	?>
-			<div class="column">                 
-			    <a href="<?php echo $image['sizes']['fp-large']; ?>" class="lightbox" title="<?php echo ($image['caption'] ? $image['caption']  : $defaultImgCaption ); ?>">
+			<div class="column">   
+			    <a href="<?php echo $image['sizes']['fp-large']; ?>" class="lightbox"<?php echo  $image_caption; ?>>
 					<img class="thumbnail" src="<?php echo $image['sizes'][$thumbnail_size]; ?>" alt="<?php echo ($image['alt'] ? $image['alt']  : 'Image'); ?>" title="<?php echo ($image['title'] ? $image['title']  : $defaultImgTitle); ?>" />
 				</a>
 			</div>
