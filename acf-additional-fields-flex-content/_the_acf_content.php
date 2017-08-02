@@ -45,6 +45,7 @@ function get_acf_video($row_class='') {
 	else:
 
 		$url = get_sub_field('video', false, false);
+		$url = strtok($url, '?');
 		$url = urldecode(rawurldecode($url));
 	    preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $url, $matches);
 		if (isset($matches[1])):
@@ -94,17 +95,19 @@ function get_acf_gallery($images, $row_class='') {
             $defaultImgCaption = '';
             $defaultImgTitle = '';
             $image_caption = '';
-			if (isset($image['caption']) && $image['caption']) {
-				$image_caption = ' title="'.$image['caption'].'"';
-			}
-			elseif (isset($image['alt']) && $image['alt']) { 
+			// if (isset($image['caption']) && $image['caption']) {
+			// 	$image_caption = ' title="'.$image['caption'].'"';
+			// }
+			// else
+			if (isset($image['alt']) && $image['alt']) { 
 				$image_caption = ' title="'.$image['alt'].'"';
 			}
 
 	    	?>
-			<div class="column">   
-			    <a href="<?php echo $image['sizes']['fp-large']; ?>" class="lightbox"<?php echo  $image_caption; ?>>
-					<img class="thumbnail" src="<?php echo $image['sizes'][$thumbnail_size]; ?>" alt="<?php echo ($image['alt'] ? $image['alt']  : 'Image'); ?>" title="<?php echo ($image['title'] ? $image['title']  : $defaultImgTitle); ?>" />
+			<div class="column gallery-item">   
+			    <a href="<?php echo $image['sizes']['fp-large']; ?>" class="lightbox"<?php echo $image_caption; ?>>
+					<img class="thumbnail" src="<?php echo $image['sizes'][$thumbnail_size]; ?>" alt="<?php echo ($image['alt'] ? $image['alt']  : 'Image'); ?>" />
+					<?php /* title="<?php echo ($image['alt'] ? $image['alt']  : $defaultImgTitle); ?>"  */ ?>
 				</a>
 			</div>
 			<?php
@@ -125,4 +128,37 @@ function get_acf_gallery($images, $row_class='') {
 	$acf_content = ob_get_contents();
 	ob_end_clean();
 	return $acf_content;
+}
+
+function featured_image_check() {
+	if( !have_rows('modules') ) {
+		the_image();
+	}
+}
+
+function the_image() {
+global $post;
+// If a featured image is set, insert into layout
+if ( has_post_thumbnail( $post->ID ) ) : 
+	$post_thumbnail_id = get_post_thumbnail_id( $post );
+	$thumb = get_post( $post_thumbnail_id );
+	$alt = get_post_meta( $thumb->ID, '_wp_attachment_image_alt', true ); //alt text 
+	if (!$alt) {
+		$alt = get_the_title();
+	}
+	?>
+	<div id="featured-image-posts">
+		
+		<?php if (is_single()): ?>
+			<div class="gallery-item">
+				<a href="<?php echo the_post_thumbnail_url('large'); ?>" class="lightbox"><img class="thumbnail" alt="<?php echo $alt; ?>" src="<?php echo the_post_thumbnail_url('large'); ?>"></a>
+			</div>
+		<?php else: ?>
+			
+				<a href="<?php echo get_permaLink($post->ID) ?>"><img class="thumbnail" alt="<?php echo $alt; ?>" src="<?php echo the_post_thumbnail_url('large'); ?>"></a>
+			
+		<?php endif ?>
+		
+	</div>
+<?php endif;
 }

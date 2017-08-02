@@ -16,6 +16,26 @@ function register_email_shortcode() {
 add_action( 'init', 'register_email_shortcode');
 
 /*
+ * name Shortcode
+ */
+function shortcode_name($atts = array(), $content = null, $tag = '') {
+	$name = '';
+	if( get_field('first_name' , 'option') ) {
+		$name = get_field('first_name' , 'option');	
+	}
+	if( get_field('last_name', 'option') ) {
+	    $name .= ' '. get_field('last_name', 'option');
+	}
+	$name = trim($name);	
+	$value = '<span class="key-value name"><span class="key">Name: </span><span class="value">'.$name.'</span></span>';
+	return generic_shortcode_wrap($value, $atts);
+}
+function register_name_shortcode() {
+  add_shortcode('name', 'shortcode_name');
+}
+add_action( 'init', 'register_name_shortcode');
+
+/*
  * Address Shortcode
  */
 function shortcode_address($atts = array(), $content = null, $tag = '') {
