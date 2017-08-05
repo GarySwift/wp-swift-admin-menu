@@ -174,6 +174,25 @@ Or you can remove the wrap using the false attribute.
 			'rows' => 2,
 			'new_lines' => 'br',
 		),
+		array (
+			'key' => 'field_598480a1b721c',
+			'label' => 'Opening Hours',
+			'name' => 'opening_hours',
+			'type' => 'textarea',
+			'instructions' => 'Shortcode: [opening_hours]',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array (
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'placeholder' => '',
+			'maxlength' => '',
+			'rows' => 2,
+			'new_lines' => 'br',
+		),	
 	),
 	'location' => array (
 		array (
