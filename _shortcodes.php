@@ -4,9 +4,13 @@
  */
 function shortcode_email($atts = array(), $content = null, $tag = '') {
 	$value = '';
+	$key = '';
 	if( get_field('email' , 'option') ) {
 		$value = get_field('email' , 'option');
-		$value = '<span class="key-value email"><span class="key">Email: </span><span class="value"><a href="mailto:'.$value.'">'.$value.'</a></span></span>';
+		if (isset($atts["key"]) && $atts["key"] !== "false") {
+			$key = '<span class="key">Email: </span>';
+		}
+		$value = '<span class="key-value email">'.$key.'<span class="value"><a href="mailto:'.$value.'">'.$value.'</a></span></span>';
 	}
 	return generic_shortcode_wrap($value, $atts);  
 }

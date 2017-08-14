@@ -85,7 +85,7 @@ Or you can remove the wrap using the false attribute.
 			'label' => 'Email',
 			'name' => 'email',
 			'type' => 'email',
-			'instructions' => 'Shortcode: [email]',
+			'instructions' => 'Shortcodes: [email], [email wrap="false" key="false"]',
 			'required' => 0,
 			'conditional_logic' => 0,
 			'wrapper' => array (
