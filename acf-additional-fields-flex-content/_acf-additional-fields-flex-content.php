@@ -22,7 +22,7 @@ function wp_swift_get_location() {
 		$acf_additional_fields_cpt = $options['acf_additional_fields_cpt'];
 		$acf_additional_fields_cpt_array = explode(',', $acf_additional_fields_cpt);
 		foreach ($acf_additional_fields_cpt_array as $key => $post_type) {
-			if ($post_type !== 'post' && $post_type != 'page' && post_type_exists( $post_type )) {
+			if ($post_type !== 'post' && $post_type != 'page' ) {//&& post_type_exists( $post_type )
 				$location[] = array( array (
 					'param' => 'post_type',
 					'operator' => '==',
@@ -30,7 +30,7 @@ function wp_swift_get_location() {
 				));
 			}
 		}
-	} 		
+	} 	
 	return $location;
 }
 if( function_exists('acf_add_local_field_group') ):

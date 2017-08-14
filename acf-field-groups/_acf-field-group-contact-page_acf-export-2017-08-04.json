@@ -1,0 +1,193 @@
+[
+    {
+        "key": "group_58ee803f4eb5d",
+        "title": "Contact Details",
+        "fields": [
+            {
+                "key": "field_58ee80cbf9d78",
+                "label": "Notes",
+                "name": "",
+                "type": "message",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "message": "You should input the phone number so that it is easily readable by humans. This is then parsed in the background to become a machine dialable number. (ie. users can click to call on their phone.) The number input here is the publically visible number that users will see.\r\n\r\n<b>Example:<\/b>\r\n\r\n<pre>+353 (0)51 124 1234<\/pre>\r\n\r\nThis will then be parsed into:\r\n\r\n<pre>+35351124234<\/pre>\r\n\r\nAs you can see, spaces are removed as is the optional zero and brackets before the area code.\r\n\r\n<b>Shortcodes:<\/b>\r\n\r\nShortcodes are automatically wrapped in a p tag. Most shortcodes will take the following attributes like this:\r\n\r\n<pre>[shortcode wrap=\"h3\" class=\"highlight\"]<\/pre>\r\n\r\nOr you can remove the wrap using the false attribute.\r\n\r\n<pre>[shortcode wrap=\"false\"]<\/pre>",
+                "new_lines": "wpautop",
+                "esc_html": 0
+            },
+            {
+                "key": "field_58ee806d145a3",
+                "label": "Mobile",
+                "name": "mobile",
+                "type": "text",
+                "instructions": "Shortcode: [mobile]",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_58ee804f145a2",
+                "label": "Office Phone",
+                "name": "office_phone",
+                "type": "text",
+                "instructions": "Shortcode: [phone]",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_58ee8078145a4",
+                "label": "Email",
+                "name": "email",
+                "type": "email",
+                "instructions": "Shortcode: [email]",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": ""
+            },
+            {
+                "key": "field_58ee83cdc7f47",
+                "label": "First Name",
+                "name": "first_name",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_58ee83e2c7f48",
+                "label": "Last Name",
+                "name": "last_name",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_590c74274a2ac",
+                "label": "Address",
+                "name": "address",
+                "type": "textarea",
+                "instructions": "Shortcode: [address]",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "maxlength": "",
+                "rows": 5,
+                "new_lines": "br"
+            },
+            {
+                "key": "field_59143534ff9b1",
+                "label": "Short Address",
+                "name": "short_address",
+                "type": "textarea",
+                "instructions": "Shortcode: [short_address]",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "maxlength": "",
+                "rows": 2,
+                "new_lines": "br"
+            },
+            {
+                "key": "field_598480a1b721c",
+                "label": "Opening Hours",
+                "name": "opening_hours",
+                "type": "textarea",
+                "instructions": "Shortcode: [opening_hours]",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "maxlength": "",
+                "rows": 2,
+                "new_lines": "br"
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "options_page",
+                    "operator": "==",
+                    "value": "contact_details"
+                }
+            ]
+        ],
+        "menu_order": 0,
+        "position": "normal",
+        "style": "default",
+        "label_placement": "top",
+        "instruction_placement": "label",
+        "hide_on_screen": "",
+        "active": 1,
+        "description": ""
+    }
+]

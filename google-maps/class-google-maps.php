@@ -479,7 +479,7 @@ Using shortcodes, you have the following options:
 <pre class="prettyprint custom">
 // WordPress shortcode
 
-[google_map]
+[google-map]
 
 // This also accepts parameters
 
