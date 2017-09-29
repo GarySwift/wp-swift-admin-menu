@@ -18,7 +18,7 @@ if ( !function_exists('get_phone') )  {
 	            return $phone_num;
 	        }
     	}
-    	return '';
+    	return false;
     }	
 }
 /*

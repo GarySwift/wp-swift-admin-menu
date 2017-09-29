@@ -47,13 +47,13 @@ class WP_Swift_Google_Maps {
 
 
         # Load the CSS
-        add_action( 'wp_enqueue_scripts', array($this, 'wp_swift_admin_menu_css_file') );
+        // add_action( 'wp_enqueue_scripts', array($this, 'wp_swift_admin_menu_css_file') );
 
         # Load the admin CSS
         add_action( 'admin_enqueue_scripts', array($this, 'wp_swift_admin_menu_css_file_admin_style' ));
 
         # Load the JavaScript
-        add_action( 'wp_enqueue_scripts', array($this, 'enqueue_javascript') );
+        // add_action( 'wp_enqueue_scripts', array($this, 'enqueue_javascript') );
 
         # Load the admin JavaScript
         add_action('admin_footer', array($this, 'enqueue_admin_javascript'));
