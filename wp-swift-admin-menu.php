@@ -808,3 +808,7 @@ function wp_swift_get_parent_slug() {
         return 'options-general.php';
     }
 }
+
+function wp_swift_admin_menu_slug() {
+	return 'wp-swift-admin-menu';
+}
