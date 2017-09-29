@@ -72,25 +72,25 @@ jQuery(document).ready(function($){
 	//@end google maps
 
 	//@start hidden map fix 
-	var $map = $("#google-map");
-	var $showMapButton = $("#show-map-button");
-	var $closeMapButton = $("#close-map-button");
-	var $closeMapDiv = $("#close-map-wrapper"); 
-	$map.hide().removeClass("hide");
-	$closeMapDiv.hide().removeClass("hide");
+	// var $map = $("#google-map");
+	// var $showMapButton = $("#show-map-button");
+	// var $closeMapButton = $("#close-map-button");
+	// var $closeMapDiv = $("#close-map-wrapper"); 
+	// $map.hide().removeClass("hide");
+	// $closeMapDiv.hide().removeClass("hide");
 
-	$showMapButton.click(function() {
-		$map.slideToggle(function() {
-		$closeMapDiv.toggle();
-			if (!google_map_executed) {
-				render_map( $(this) );
-	            google_map_executed = true;
-	        }
-		});
-	});
-	$closeMapButton.click(function() {
-		$map.slideUp();
-		$closeMapDiv.hide();
-	}); 
+	// $showMapButton.click(function() {
+	// 	$map.slideToggle(function() {
+	// 	$closeMapDiv.toggle();
+	// 		if (!google_map_executed) {
+	// 			render_map( $(this) );
+	//             google_map_executed = true;
+	//         }
+	// 	});
+	// });
+	// $closeMapButton.click(function() {
+	// 	$map.slideUp();
+	// 	$closeMapDiv.hide();
+	// }); 
 	//@start end map fix
 });
